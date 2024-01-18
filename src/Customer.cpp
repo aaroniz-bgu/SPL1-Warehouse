@@ -60,13 +60,48 @@ int Customer::addOrder(int orderId) {
 //                                     SoldierCustomer
 // #######################################################################################
 
+// Constructor
 SoldierCustomer::SoldierCustomer(int id, string name, int locationDistance, int maxOrders) :
 Customer(id, name, locationDistance, maxOrders) { }
 
-SoldierCustomer *SoldierCustomer::clone() const {
+// Copy constructor
+SoldierCustomer::SoldierCustomer(const SoldierCustomer &other) :
+Customer(other.getId(), other.getName(),
+         other.getCustomerDistance(),
+         other.getMaxOrders()){
+    // Copying the orders
+    const vector<int> &otherOrders = other.getOrdersIds();
+    for (int i : otherOrders) {
+        addOrder(i);
+    }
+}
 
+// Returns a copy of the customer.
+SoldierCustomer *SoldierCustomer::clone() const {
+    return new SoldierCustomer(*this);
 }
 
 // #######################################################################################
 //                                     CivilianCustomer
 // #######################################################################################
+
+// Constructor
+CivilianCustomer::CivilianCustomer(int id, string name, int locationDistance, int maxOrders) :
+Customer(id, name, locationDistance, maxOrders) { }
+
+// Copy constructor
+CivilianCustomer::CivilianCustomer(const CivilianCustomer &other) :
+        Customer(other.getId(), other.getName(),
+                 other.getCustomerDistance(),
+                 other.getMaxOrders()) {
+    // Copying the orders
+    const vector<int> &otherOrders = other.getOrdersIds();
+    for (int i: otherOrders) {
+        addOrder(i);
+    }
+}
+
+// Returns a copy of the customer.
+CivilianCustomer *CivilianCustomer::clone() const {
+    return new CivilianCustomer(*this);
+}
