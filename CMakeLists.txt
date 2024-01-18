@@ -12,4 +12,5 @@ add_executable(assignment_1
         include/Volunteer.h
         include/WareHouse.h
         src/main.cpp
-        src/Customer.cpp)
+        src/Customer.cpp
+        src/Order.cpp)
