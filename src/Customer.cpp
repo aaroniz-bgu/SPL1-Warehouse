@@ -9,45 +9,69 @@ using std::vector;
 //                                     AbstractCustomer
 // #######################################################################################
 
-// Constructor
+/**
+ * Constructor
+ * @param id - customer's identifier.
+ * @param name - customer's name.
+ * @param locationDistance - customer's distance from the Warehouse.
+ * @param maxOrders - customer's order limit.
+ */
 Customer::Customer(int id, const string &name, int locationDistance, int maxOrders) :
 id(id), name(name), locationDistance(locationDistance), maxOrders(maxOrders) { /* Hi bodek/et */ }
 
-// Returns the customer's name.
+/**
+ * @returns the customer's name.
+ */
 const string & Customer::getName() const {
     return name;
 }
 
-// Returns the customer's id.
+/**
+ * @returns the customer's identifier.
+ */
 int Customer::getId() const {
     return id;
 }
 
+/**
+ * @returns the customer's distance from the Warehouse.
+ */
 int Customer::getCustomerDistance() const {
     return locationDistance;
 }
 
-// Returns maxOrders
+/**
+ * @returns the customer's max orders.
+ */
 int Customer::getMaxOrders() const {
     return maxOrders;
 }
 
-// Returns num of orders the customer has made so far
+/**
+ * @returns num of orders the customer has made so far
+ */
 int Customer::getNumOrders() const {
    return ordersId.size();
 }
 
-// Returns true if the customer didn't reach max orders
+/**
+ * @returns true if the customer can make another order, false otherwise.
+ */
 bool Customer::canMakeOrder() const {
     return ordersId.size() < maxOrders;
 }
 
-// Returns a vector of the customer's orders ids.
+/**
+ * @returns vector containing the customer's orders.
+ */
 const vector<int> &Customer::getOrdersIds() const {
     return ordersId;
 }
 
-// Returns OrderId if order was added successfully, -1 otherwise
+/**
+ * @param orderId - Adds an order to the customer's orders.
+ * @returns -1 if the customer reached max orders, else returns the orderId.
+ */
 int Customer::addOrder(int orderId) {
     if(canMakeOrder()) {
         ordersId.push_back(orderId);
@@ -60,11 +84,20 @@ int Customer::addOrder(int orderId) {
 //                                     SoldierCustomer
 // #######################################################################################
 
-// Constructor
+/**
+ * Constructor
+ * @param id - customer's identifier.
+ * @param name - customer's name.
+ * @param locationDistance - customer's distance from the Warehouse.
+ * @param maxOrders - customer's order limit.
+ */
 SoldierCustomer::SoldierCustomer(int id, string name, int locationDistance, int maxOrders) :
 Customer(id, name, locationDistance, maxOrders) { }
 
-// Copy constructor
+/**
+ * Copy constructor
+ * @param other - the customer to copy.
+ */
 SoldierCustomer::SoldierCustomer(const SoldierCustomer &other) :
 Customer(other.getId(), other.getName(),
          other.getCustomerDistance(),
@@ -76,7 +109,9 @@ Customer(other.getId(), other.getName(),
     }
 }
 
-// Returns a copy of the customer.
+/**
+ * @returns a pointer to a copy of the customer.
+ */
 SoldierCustomer *SoldierCustomer::clone() const {
     return new SoldierCustomer(*this);
 }
@@ -85,11 +120,20 @@ SoldierCustomer *SoldierCustomer::clone() const {
 //                                     CivilianCustomer
 // #######################################################################################
 
-// Constructor
+/**
+ * Constructor
+ * @param id - customer's identifier.
+ * @param name - customer's name.
+ * @param locationDistance - customer's distance from the Warehouse.
+ * @param maxOrders - customer's order limit.
+ */
 CivilianCustomer::CivilianCustomer(int id, string name, int locationDistance, int maxOrders) :
 Customer(id, name, locationDistance, maxOrders) { }
 
-// Copy constructor
+/**
+ * Copy constructor
+ * @param other - the customer to copy.
+ */
 CivilianCustomer::CivilianCustomer(const CivilianCustomer &other) :
         Customer(other.getId(), other.getName(),
                  other.getCustomerDistance(),
@@ -101,7 +145,9 @@ CivilianCustomer::CivilianCustomer(const CivilianCustomer &other) :
     }
 }
 
-// Returns a copy of the customer.
+/**
+ * @returns a pointer to a copy of the customer.
+ */
 CivilianCustomer *CivilianCustomer::clone() const {
     return new CivilianCustomer(*this);
 }
