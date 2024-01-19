@@ -49,8 +49,22 @@ int WareHouse::addCustomer(int type, const string &name, int locationDistance, i
     return customerCounter - 1;
 }
 
+/**
+ * Returns the customer with the given id.
+ * @param customerId
+ * @return
+ * @throws invalid_argument if customer doesn't exist.
+ * @note to self: If you're displaying this project in resume - use std::optional, it's not supported in C++11.
+ */
 Customer &WareHouse::getCustomer(int customerId) const {
-
+    if(customerId < customerCounter) {
+        for (Customer *customer: customers) {
+            if (customer->getId() == customerId) {
+                return *customer;
+            }
+        }
+    }
+    throw invalid_argument("Customer doesn't exist");
 }
 
 Volunteer &WareHouse::getVolunteer(int volunteerId) const {
