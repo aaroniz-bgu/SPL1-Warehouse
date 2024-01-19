@@ -12,8 +12,13 @@ void WareHouse::addOrder(Order* order) {
 
 }
 
+/**
+ * This action is called only once when action is performed.
+ * @param action - the action that was performed.
+ */
 void WareHouse::addAction(BaseAction* action) {
-
+    //Only call this function once per action;
+    actionsLog.push_back(action);
 }
 
 int WareHouse::addVolunteer(Volunteer* volunteer) {
