@@ -76,7 +76,7 @@ Order &WareHouse::getOrder(int orderId) const {
 }
 
 const vector<BaseAction*> &WareHouse::getActions() const {
-
+    return actionsLog;
 }
 
 void WareHouse::close() {
