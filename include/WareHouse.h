@@ -11,6 +11,7 @@ class Volunteer;
 
 // Warehouse responsible for Volunteers, Customers Actions, and Orders.
 
+//TODO Implement rule-of-5 by assignment-instructions this class must to do so since it has resources.
 
 class WareHouse {
 
