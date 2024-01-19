@@ -1,15 +1,22 @@
 #include "WareHouse.h"
 
-WareHouse::WareHouse(const string &configFilePath) {
+#include <iostream>
 
+WareHouse::WareHouse(const string &configFilePath)  : isOpen(false), customerCounter(0), volunteerCounter(0) {
+    // TODO read file and init members
+
+    start();
 }
 
-void WareHouse::start() {
+void WareHouse::start() { //TODO Listener loop here
+    cout << "Warehouse is open!" << endl;
+    while(isOpen) {
 
+    }
 }
 
 void WareHouse::addOrder(Order* order) {
-
+//TODO
 }
 
 /**
@@ -22,7 +29,7 @@ void WareHouse::addAction(BaseAction* action) {
 }
 
 int WareHouse::addVolunteer(Volunteer* volunteer) {
-    //TODO - like addCustomer; change signature.
+    //TODO - like addCustomer; change signature. or change both of them to be like this one and have a factory class.
     return -1;
 }
 
@@ -68,7 +75,14 @@ Customer &WareHouse::getCustomer(int customerId) const {
 }
 
 Volunteer &WareHouse::getVolunteer(int volunteerId) const {
-
+    if(volunteerId < volunteerCounter) {
+        for (Volunteer *volunteer: volunteers) {
+            if (volunteer->getId() == volunteerId) {
+                return *volunteer;
+            }
+        }
+    }
+    throw invalid_argument("Volunteer doesn't exist");
 }
 
 Order &WareHouse::getOrder(int orderId) const {
