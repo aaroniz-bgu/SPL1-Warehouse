@@ -16,6 +16,34 @@ void WareHouse::addAction(BaseAction* action) {
 
 }
 
+int WareHouse::addVolunteer(Volunteer* volunteer) {
+    //TODO - like addCustomer; change signature.
+    return -1;
+}
+
+/**
+ * Adds a new Customer instance into the system.
+ * @param type Casted from enum {@link CustomerType} at {@link Action.h}.
+ * @param name The name of the customer.
+ * @param locationDistance Costumer's distance from the warehouse.
+ * @param maxOrders The maximum number of orders the customer can make.
+ * @returns A unique identifier of the customer for future querying.
+ */
+int WareHouse::addCustomer(int type, const string &name, int locationDistance, int maxOrders) {
+    Customer *customer = nullptr;
+    // Consider using a map/switch instead of if-else, right now it's ok.
+    if(type == 0) {
+        customer = new SoldierCustomer(customerCounter, name, locationDistance, maxOrders);
+    } else if (type == 1) {
+        customer = new CivilianCustomer(customerCounter, name, locationDistance, maxOrders);
+    } else {
+        return -1;
+    }
+    customers.push_back(customer);
+    customerCounter++;
+    return customerCounter - 1;
+}
+
 Customer &WareHouse::getCustomer(int customerId) const {
 
 }
