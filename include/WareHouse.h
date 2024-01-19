@@ -26,6 +26,8 @@ class WareHouse {
         void close();
         void open();
 
+        ~WareHouse(); //Destructor
+
     private:
         bool isOpen;
         vector<BaseAction*> actionsLog;
