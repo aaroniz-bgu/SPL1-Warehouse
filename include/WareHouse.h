@@ -26,6 +26,9 @@ class WareHouse {
         void close();
         void open();
 
+        // Student defined functions:
+        int addVolunteer(Volunteer* volunteer);
+        int addCustomer(int type, const string &name, int locationDistance, int maxOrders);
         ~WareHouse(); //Destructor
 
     private:
