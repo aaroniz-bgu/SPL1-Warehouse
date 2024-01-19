@@ -1,4 +1,3 @@
-#include <stdexcept>
 #include "Order.h"
 
 /**
@@ -76,6 +75,24 @@ OrderStatus Order::getStatus() const {
  * @returns a string descriptor of the order
  */
 const string Order::toString() const {
-    //TODO
-    throw std::logic_error("Unimplemented method");
+    string output = "OrderID: " + std::to_string(id) + "\n";
+    switch (status) {
+        case OrderStatus::PENDING:
+            output += "OrderStatus: Pending\n";
+            break;
+        case OrderStatus::COLLECTING:
+            output += "OrderStatus: Collecting\n";
+            break;
+        case OrderStatus::DELIVERING:
+            output += "OrderStatus: Delivering\n";
+            break;
+        case OrderStatus::COMPLETED:
+            output += "OrderStatus: Completed\n";
+            break;
+        default: output += "Internal error\n";
+    }
+    output += "CustomerID: " + std::to_string(customerId) + "\n";
+    output += "CollectorID: " + ((collectorId == -1) ? "None\n" : std::to_string(collectorId) + "\n");
+    output += "DriverID: " + ((driverId == -1) ? "None" : std::to_string(driverId));
+    return output;
 }
