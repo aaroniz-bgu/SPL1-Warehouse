@@ -14,4 +14,5 @@ add_executable(assignment_1
         src/main.cpp
         src/Customer.cpp
         src/Order.cpp
-        src/WareHouse.cpp)
+        src/WareHouse.cpp
+        src/Volunteer.cpp)
