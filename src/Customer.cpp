@@ -143,7 +143,7 @@ CivilianCustomer::CivilianCustomer(const CivilianCustomer &other) :
     for (int i: otherOrders) {
         addOrder(i);
     }
-}
+} // FIXME: check if the default copy constructor is enough and this might be redundant
 
 /**
  * @returns a pointer to a copy of the customer.
