@@ -11,7 +11,7 @@ WareHouse::WareHouse(const string &configFilePath)  : isOpen(false), customerCou
 void WareHouse::start() { //TODO Listener loop here
     cout << "Warehouse is open!" << endl;
     while(isOpen) {
-
+        string input;
     }
 }
 
@@ -29,7 +29,7 @@ void WareHouse::addAction(BaseAction* action) {
 }
 
 int WareHouse::addVolunteer(Volunteer* volunteer) {
-    //TODO - like addCustomer; change signature. or change both of them to be like this one and have a factory class.
+    //TODO - like addCustomer;
     return -1;
 }
 
@@ -104,7 +104,7 @@ void WareHouse::open() {
 /**
  * Destructor of WareHouse.
  */
-WareHouse::~WareHouse() { // Consult with Daniel about this, bc it's disgusting imo.
+WareHouse::~WareHouse() {
     for(Volunteer * volunteer : volunteers) {
         delete volunteer; //FIXME - yet to implement destructor of volunteer
     }
