@@ -31,6 +31,8 @@ class Order {
         OrderStatus getStatus() const;
         const string toString() const;
 
+        ~Order() = default;
+
     private:
         const int id;
         const int customerId;

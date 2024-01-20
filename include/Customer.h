@@ -22,7 +22,8 @@ class Customer {
 
         virtual Customer *clone() const = 0; // Return a copy of the customer
 
-        
+        virtual ~Customer() = default;
+
     private:
         const int id;
         const string name;
