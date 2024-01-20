@@ -5,6 +5,7 @@ using namespace std;
 
 #include "Order.h"
 #include "Customer.h"
+#include "ActionFactory.h"
 
 class BaseAction;
 class Volunteer;
@@ -27,10 +28,11 @@ class WareHouse {
         void close();
         void open();
 
-        // Student defined functions:
+        // Student defined functions and variables:
         int addVolunteer(Volunteer* volunteer);
         int addCustomer(int type, const string &name, int locationDistance, int maxOrders);
         ~WareHouse(); //Destructor
+
 
     private:
         bool isOpen;
@@ -42,4 +44,6 @@ class WareHouse {
         vector<Customer*> customers;
         int customerCounter; //For assigning unique customer IDs
         int volunteerCounter; //For assigning unique volunteer IDs
+        ActionFactory actionFactory;
+
 };
