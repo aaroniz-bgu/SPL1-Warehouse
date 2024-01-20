@@ -63,9 +63,9 @@ CollectorVolunteer *CollectorVolunteer::clone() const  {
 
 void CollectorVolunteer::step()  {
     if(activeOrderId != -1) {
-        if(decreaseCoolDown()) {
+        if(timeLeft != 0 && decreaseCoolDown()) {
             completedOrderId = activeOrderId;
-            activeOrderId = -1;
+            activeOrderId = NO_ORDER;
         }
     }
 }
