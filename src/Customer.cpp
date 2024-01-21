@@ -95,21 +95,6 @@ SoldierCustomer::SoldierCustomer(int id, string name, int locationDistance, int 
 Customer(id, name, locationDistance, maxOrders) { }
 
 /**
- * Copy constructor
- * @param other - the customer to copy.
- */
-SoldierCustomer::SoldierCustomer(const SoldierCustomer &other) :
-Customer(other.getId(), other.getName(),
-         other.getCustomerDistance(),
-         other.getMaxOrders()){
-    // Copying the orders
-    const vector<int> &otherOrders = other.getOrdersIds();
-    for (int i : otherOrders) {
-        addOrder(i);
-    } // FIXME: check if the default copy constructor is enough and this might be redundant
-}
-
-/**
  * @returns a pointer to a copy of the customer.
  */
 SoldierCustomer *SoldierCustomer::clone() const {
@@ -129,21 +114,6 @@ SoldierCustomer *SoldierCustomer::clone() const {
  */
 CivilianCustomer::CivilianCustomer(int id, string name, int locationDistance, int maxOrders) :
 Customer(id, name, locationDistance, maxOrders) { }
-
-/**
- * Copy constructor
- * @param other - the customer to copy.
- */
-CivilianCustomer::CivilianCustomer(const CivilianCustomer &other) :
-        Customer(other.getId(), other.getName(),
-                 other.getCustomerDistance(),
-                 other.getMaxOrders()) {
-    // Copying the orders
-    const vector<int> &otherOrders = other.getOrdersIds();
-    for (int i: otherOrders) {
-        addOrder(i);
-    }
-} // FIXME: check if the default copy constructor is enough and this might be redundant
 
 /**
  * @returns a pointer to a copy of the customer.
