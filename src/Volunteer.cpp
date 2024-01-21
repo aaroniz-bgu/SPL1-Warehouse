@@ -243,7 +243,7 @@ DriverVolunteer *DriverVolunteer::clone() const{
 }
 
 /**
- * @returns the how much distance is left for the order to be delivered.
+ * @returns how much distance is left for the order to be delivered.
  */
 int DriverVolunteer::getDistanceLeft() const{
     return distanceLeft;
@@ -331,4 +331,85 @@ string DriverVolunteer::toString() const {
     return output;
 }
 
-//
+// ########################################################################### //
+// ###                       LimitedDriverVolunteer                        ### //
+// ########################################################################### //
+
+/**
+ * @param id the volunteer's identifier.
+ * @param name the volunteer's name.
+ * @param maxDistance the maximum distance the volunteer can travel.
+ * @param distancePerStep the distance the volunteer travels in each step.
+ * @param maxOrders the maximum number of orders the volunteer can take.
+ */
+LimitedDriverVolunteer::LimitedDriverVolunteer(int id, const string &name, int maxDistance, int distancePerStep,int maxOrders) :
+DriverVolunteer(id, name, maxDistance, distancePerStep), maxOrders(maxOrders), ordersLeft(maxOrders) {}
+
+/**
+ * @returns a copy of this volunteer.
+ */
+LimitedDriverVolunteer *LimitedDriverVolunteer::clone() const {
+    return new LimitedDriverVolunteer(*this);
+}
+
+/**
+ * @returns the maximal number of orders this volunteer is able to make.
+ */
+int LimitedDriverVolunteer::getMaxOrders() const {
+    return maxOrders;
+}
+
+/**
+ * @returns the number of orders the volunteer can still take.
+ */
+int LimitedDriverVolunteer::getNumOrdersLeft() const {
+    return ordersLeft;
+}
+
+/**
+ * @returns true if the volunteer is still able to take orders, otherwise false.
+ */
+bool LimitedDriverVolunteer::hasOrdersLeft() const {
+    return ordersLeft > 0;
+}
+
+/**
+ * Signal if the volunteer is not busy, the order is within the maxDistance.
+ * @returns true if the volunteer can take the order, otherwise false.
+ */
+bool LimitedDriverVolunteer::canTakeOrder(const Order &order) const {
+    return activeOrderId == NO_ORDER && order.getDistance() <= getMaxDistance() && ordersLeft > 0;
+}
+
+/**
+ * Assigns the order to this driver.
+ * @note Does not assign itself as the order's driver volunteer &
+ * does not update the status - must be done by the caller.
+ * @param order The order to be assigned.
+ */
+void LimitedDriverVolunteer::acceptOrder(const Order &order) {
+    if(canTakeOrder(order)) {
+        ordersLeft -= 1;
+        DriverVolunteer::acceptOrder(order);
+    }
+}
+
+/**
+ * @returns a string description of the volunteer.
+ */
+string LimitedDriverVolunteer::toString() const {
+    string output = "VolunteerID: ";
+    output += std::to_string(getId());
+    output += "\nisBusy: ";
+    if(activeOrderId != NO_ORDER) {
+        output += "True\nOrderID: ";
+        output += std::to_string(activeOrderId);
+        output += "\nDistanceLeft: ";
+        output += std::to_string(getDistanceLeft());
+    } else {
+        output += "False\n OrderID: None\nTimeLeft: None";
+    }
+    output += "\nOrdersLeft: ";
+    output += std::to_string(ordersLeft);
+    return output;
+}
