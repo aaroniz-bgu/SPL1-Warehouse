@@ -96,3 +96,7 @@ const string Order::toString() const {
     output += "DriverID: " + ((driverId == -1) ? "None" : std::to_string(driverId));
     return output;
 }
+
+int Order::getDistance() const {
+    return distance;
+}
