@@ -240,7 +240,9 @@ WareHouse::WareHouse(WareHouse &&other) {
         actionsLog[i] = other.actionsLog[i]->clone();
         other.actionsLog[i] = nullptr;
     }
-} // I was wrong, this is a tidy bit more disgusting.
+
+    // Should I clear the other vectors? I don't know.
+} // I was wrong, this is a tiny bit more disgusting.
 
 WareHouse& WareHouse::operator=(const WareHouse &other) {
     if(this == &other) return *this; // Self assignment
@@ -252,40 +254,91 @@ WareHouse& WareHouse::operator=(const WareHouse &other) {
     volunteerCounter = other.volunteerCounter;
 
     // Copying volunteers
-    volunteers.clear();
     for (const Volunteer * v: other.volunteers) {
         volunteers.push_back(v->clone());
     }
     // Copying customers
-    customers.clear();
     for (const Customer * c: other.customers) {
         customers.push_back(c->clone());
     }
     // Copying pending orders
-    pendingOrders.clear();
     for (const Order * o: other.pendingOrders) {
         pendingOrders.push_back(new Order(*o));
     }
     // Copying in process orders
-    inProcessOrders.clear();
     for (const Order * o: other.inProcessOrders) {
         inProcessOrders.push_back(new Order(*o));
     }
     // Copying completed orders
-    completedOrders.clear();
     for (const Order * o: other.completedOrders) {
         completedOrders.push_back(new Order(*o));
     }
     // Copying actions log
-    actionsLog.clear();
     for(const BaseAction * a : other.actionsLog) {
         actionsLog.push_back(a->clone());
     }
-
+    return *this;
 }
 
 WareHouse& WareHouse::operator=(WareHouse &&other) {
-    // TODO
+    if(this == &other) return *this; // Self assignment
+
+    freeResources();
+    isOpen = other.isOpen;
+    customerCounter = other.customerCounter;
+    volunteerCounter = other.volunteerCounter;
+
+    // Copying volunteers
+    int size = other.volunteers.size(); // Minimizing calls to size()
+    volunteers = vector<Volunteer*>(size);
+    for (int i = 0; i < size; i++) {
+        volunteers[i] = other.volunteers[i]->clone();
+        other.volunteers[i] = nullptr;
+    }
+    // Copying customers
+    size = other.customers.size();
+    customers = vector<Customer*>(size);
+    for (int i = 0; i < size; i++) {
+        customers[i] = other.customers[i]->clone();
+        other.customers[i] = nullptr;
+    }
+    //
+    size = other.pendingOrders.size();
+    pendingOrders = vector<Order*>(size);
+    for (int i = 0; i < size; i++) {
+        pendingOrders[i] = new Order(*other.pendingOrders[i]);
+        other.pendingOrders[i] = nullptr;
+    }
+    size = other.inProcessOrders.size();
+    inProcessOrders = vector<Order*>(size);
+    for (int i = 0; i < size; i++) {
+        inProcessOrders[i] = new Order(*other.inProcessOrders[i]);
+        other.inProcessOrders[i] = nullptr;
+    }
+    size = other.completedOrders.size();
+    completedOrders = vector<Order*>(size);
+    for (int i = 0; i < size; i++) {
+        completedOrders[i] = new Order(*other.completedOrders[i]);
+        other.completedOrders[i] = nullptr;
+    }
+    size = other.actionsLog.size();
+    actionsLog = vector<BaseAction*>(size);
+    for (int i = 0; i < size; i++) {
+        actionsLog[i] = other.actionsLog[i]->clone();
+        other.actionsLog[i] = nullptr;
+    }
+
+    other.isOpen = false;
+    other.customerCounter = 0;
+    other.volunteerCounter = 0;
+    other.volunteers.clear();
+    other.customers.clear();
+    other.pendingOrders.clear();
+    other.inProcessOrders.clear();
+    other.completedOrders.clear();
+    other.actionsLog.clear();
+
+    return *this;
 }
 
 /**
