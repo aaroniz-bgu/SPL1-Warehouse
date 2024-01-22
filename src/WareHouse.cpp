@@ -245,12 +245,7 @@ WareHouse::WareHouse(WareHouse &&other) {
 WareHouse& WareHouse::operator=(const WareHouse &other) {
     if(this == &other) return *this; // Self assignment
 
-    for(Volunteer * v : volunteers) if(v != nullptr) delete v;
-    for(Customer * c : customers) if(c != nullptr) delete c;
-    for(Order * o : pendingOrders) if(o != nullptr) delete o;
-    for(Order * o : inProcessOrders) if(o != nullptr) delete o;
-    for(Order * o : completedOrders) if(o != nullptr) delete o;
-    for(BaseAction * a : actionsLog) if(a != nullptr) delete a;
+    freeResources();
 
     isOpen = other.isOpen;
     customerCounter = other.customerCounter;
@@ -291,4 +286,24 @@ WareHouse& WareHouse::operator=(const WareHouse &other) {
 
 WareHouse& WareHouse::operator=(WareHouse &&other) {
     // TODO
+}
+
+/**
+ * Don't even think about using this function.
+ * Frees all resources used by the WareHouse.
+ */
+void WareHouse::freeResources() {
+    for(Volunteer * v : volunteers) if(v != nullptr) delete v;
+    for(Customer * c : customers) if(c != nullptr) delete c;
+    for(Order * o : pendingOrders) if(o != nullptr) delete o;
+    for(Order * o : inProcessOrders) if(o != nullptr) delete o;
+    for(Order * o : completedOrders) if(o != nullptr) delete o;
+    for(BaseAction * a : actionsLog) if(a != nullptr) delete a;
+
+    volunteers.clear();
+    customers.clear();
+    pendingOrders.clear();
+    inProcessOrders.clear();
+    completedOrders.clear();
+    actionsLog.clear();
 }
