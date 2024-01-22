@@ -1,10 +1,12 @@
 #include "WareHouse.h"
 
 #include <iostream>
+#include "Volunteer.h"
+#include "Action.h"
 
 WareHouse::WareHouse(const string &configFilePath)  : isOpen(false), customerCounter(0), volunteerCounter(0) {
     // TODO read file and init members
-
+    // TODO init vectors
     start();
 }
 
@@ -103,24 +105,190 @@ void WareHouse::open() {
 
 /**
  * Destructor of WareHouse.
+ * ifs just to be safe
  */
 WareHouse::~WareHouse() {
     for(Volunteer * volunteer : volunteers) {
-        delete volunteer; //FIXME - yet to implement destructor of volunteer
+        if(volunteer != nullptr) {
+            delete volunteer; //FIXME - yet to implement destructor of volunteer
+        }
     }
     for (Customer * customer : customers) {
-        delete customer;
+        if(customer != nullptr) {
+            delete customer;
+        }
     }
     for (Order * order : pendingOrders) {
-        delete order;
+        if(order != nullptr) {
+            delete order;
+        }
     }
     for (Order * order : inProcessOrders) {
-        delete order;
+        if(order != nullptr) {
+            delete order;
+        }
     }
     for(Order * order : completedOrders) {
-        delete order;
+        if(order != nullptr) {
+            delete order;
+        }
     }
     for (BaseAction * action : actionsLog) {
-        delete action; //FIXME - yet to implement destructor of BaseAction
+        if(action != nullptr) {
+            delete action; //FIXME - yet to implement destructor of BaseAction
+        }
     }
+}
+
+/**
+ * Copy constructor of WareHouse.
+ * @param other - the WareHouse to copy.
+ */
+WareHouse::WareHouse(const WareHouse &other) : isOpen(other.isOpen),
+customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter) {
+    // Copying volunteers
+    int size = other.volunteers.size(); // Minimizing calls to size()
+    volunteers = vector<Volunteer*>(size);
+    for (int i = 0; i < size; i++) {
+        volunteers[i] = other.volunteers[i]->clone();
+    }
+
+    // Copying customers
+    size = other.customers.size();
+    customers = vector<Customer*>(size);
+    for (int i = 0; i < size; i++) {
+        customers[i] = other.customers[i]->clone();
+    }
+
+    // Copying pending orders
+    size = other.pendingOrders.size();
+    pendingOrders = vector<Order*>(size);
+    for (int i = 0; i < size; i++) {
+        pendingOrders[i] = new Order(*other.pendingOrders[i]);
+    }
+
+    // Copying in process orders
+    size = other.inProcessOrders.size();
+    inProcessOrders = vector<Order*>(size);
+    for (int i = 0; i < size; i++) {
+        inProcessOrders[i] = new Order(*other.inProcessOrders[i]);
+    }
+
+    // Copying completed orders
+    size = other.completedOrders.size();
+    completedOrders = vector<Order*>(size);
+    for (int i = 0; i < size; i++) {
+        completedOrders[i] = new Order(*other.completedOrders[i]);
+    }
+
+    // Copying actions log
+    size = other.actionsLog.size();
+    actionsLog = vector<BaseAction*>(size);
+    for (int i = 0; i < size; i++) {
+        actionsLog[i] = other.actionsLog[i]->clone();
+    }
+} // This is the ugliest piece of code I've ever written
+
+/*** Move constructor of WareHouse.
+ * @param other - the WareHouse to move.
+ */
+WareHouse::WareHouse(WareHouse &&other) {
+    // Copying volunteers
+    int size = other.volunteers.size(); // Minimizing calls to size()
+    volunteers = vector<Volunteer*>(size);
+    for (int i = 0; i < size; i++) {
+        volunteers[i] = other.volunteers[i]->clone();
+        other.volunteers[i] = nullptr;
+    }
+
+    // Copying customers
+    size = other.customers.size();
+    customers = vector<Customer*>(size);
+    for (int i = 0; i < size; i++) {
+        customers[i] = other.customers[i]->clone();
+        other.customers[i] = nullptr;
+    }
+
+    // Copying pending orders
+    size = other.pendingOrders.size();
+    pendingOrders = vector<Order*>(size);
+    for (int i = 0; i < size; i++) {
+        pendingOrders[i] = new Order(*other.pendingOrders[i]);
+        other.pendingOrders[i] = nullptr;
+    }
+
+    // Copying in process orders
+    size = other.inProcessOrders.size();
+    inProcessOrders = vector<Order*>(size);
+    for (int i = 0; i < size; i++) {
+        inProcessOrders[i] = new Order(*other.inProcessOrders[i]);
+        other.inProcessOrders[i] = nullptr;
+    }
+
+    // Copying completed orders
+    size = other.completedOrders.size();
+    completedOrders = vector<Order*>(size);
+    for (int i = 0; i < size; i++) {
+        completedOrders[i] = new Order(*other.completedOrders[i]);
+        other.completedOrders[i] = nullptr;
+    }
+
+    // Copying actions log
+    size = other.actionsLog.size();
+    actionsLog = vector<BaseAction*>(size);
+    for (int i = 0; i < size; i++) {
+        actionsLog[i] = other.actionsLog[i]->clone();
+        other.actionsLog[i] = nullptr;
+    }
+} // I was wrong, this is a tidy bit more disgusting.
+
+WareHouse& WareHouse::operator=(const WareHouse &other) {
+    if(this == &other) return *this; // Self assignment
+
+    for(Volunteer * v : volunteers) if(v != nullptr) delete v;
+    for(Customer * c : customers) if(c != nullptr) delete c;
+    for(Order * o : pendingOrders) if(o != nullptr) delete o;
+    for(Order * o : inProcessOrders) if(o != nullptr) delete o;
+    for(Order * o : completedOrders) if(o != nullptr) delete o;
+    for(BaseAction * a : actionsLog) if(a != nullptr) delete a;
+
+    isOpen = other.isOpen;
+    customerCounter = other.customerCounter;
+    volunteerCounter = other.volunteerCounter;
+
+    // Copying volunteers
+    volunteers.clear();
+    for (const Volunteer * v: other.volunteers) {
+        volunteers.push_back(v->clone());
+    }
+    // Copying customers
+    customers.clear();
+    for (const Customer * c: other.customers) {
+        customers.push_back(c->clone());
+    }
+    // Copying pending orders
+    pendingOrders.clear();
+    for (const Order * o: other.pendingOrders) {
+        pendingOrders.push_back(new Order(*o));
+    }
+    // Copying in process orders
+    inProcessOrders.clear();
+    for (const Order * o: other.inProcessOrders) {
+        inProcessOrders.push_back(new Order(*o));
+    }
+    // Copying completed orders
+    completedOrders.clear();
+    for (const Order * o: other.completedOrders) {
+        completedOrders.push_back(new Order(*o));
+    }
+    // Copying actions log
+    actionsLog.clear();
+    for(const BaseAction * a : other.actionsLog) {
+        actionsLog.push_back(a->clone());
+    }
+
+}
+
+WareHouse& WareHouse::operator=(WareHouse &&other) {
+    // TODO
 }
