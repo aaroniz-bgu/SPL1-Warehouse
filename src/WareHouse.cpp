@@ -10,6 +10,10 @@ WareHouse::WareHouse(const string &configFilePath)  : isOpen(false), customerCou
     start();
 }
 
+/**
+ * Starts the warehouse.
+ * @note This function is blocking.
+ */
 void WareHouse::start() { //TODO Listener loop here
     cout << "Warehouse is open!" << endl;
     while(isOpen) {
@@ -17,8 +21,13 @@ void WareHouse::start() { //TODO Listener loop here
     }
 }
 
+/**
+ * Adds a the order to the pending orders vector.
+ * @note Must be a newly allocated order.
+ * @param order - the order to add.
+ */
 void WareHouse::addOrder(Order* order) {
-//TODO
+    pendingOrders.push_back(order);
 }
 
 /**
@@ -76,6 +85,12 @@ Customer &WareHouse::getCustomer(int customerId) const {
     throw invalid_argument("Customer doesn't exist");
 }
 
+/**
+ * Returns the volunteer with the given id.
+ * @param volunteerId the identifier of the volunteer.
+ * @return A reference to the volunteer if exists.
+ * @throws invalid_argument if volunteer doesn't exist.
+ */
 Volunteer &WareHouse::getVolunteer(int volunteerId) const {
     if(volunteerId < volunteerCounter) {
         for (Volunteer *volunteer: volunteers) {
@@ -87,10 +102,34 @@ Volunteer &WareHouse::getVolunteer(int volunteerId) const {
     throw invalid_argument("Volunteer doesn't exist");
 }
 
+/**
+ * Returns the order with the given id.
+ * @param orderId the identifier of the volunteer.
+ * @return A reference to the order if exists.
+ * @throws invalid_argument if order doesn't exist.
+ */
 Order &WareHouse::getOrder(int orderId) const {
-
+    for(Order *o : pendingOrders) {
+        if(o->getId() == orderId) {
+            return *o;
+        }
+    }
+    for(Order *o : inProcessOrders) {
+        if(o->getId() == orderId) {
+            return *o;
+        }
+    }
+    for(Order *o : completedOrders) {
+        if(o->getId() == orderId) {
+            return *o;
+        }
+    }
+    throw invalid_argument("Order doesn't exist");
 }
 
+/**
+ * @return A reference to the pending orders vector.
+ */
 const vector<BaseAction*> &WareHouse::getActions() const {
     return actionsLog;
 }
