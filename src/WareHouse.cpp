@@ -356,6 +356,7 @@ WareHouse& WareHouse::operator=(WareHouse &&other) noexcept {
  * Frees all resources used by the WareHouse.
  */
 void WareHouse::freeResources() {
+    //[!] Notice - this is a delete operation in an if statement which is in a for loop.
     for(Volunteer * v : volunteers) if(v != nullptr) delete v;
     for(Customer * c : customers) if(c != nullptr) delete c;
     for(Order * o : pendingOrders) if(o != nullptr) delete o;
