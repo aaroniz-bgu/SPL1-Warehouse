@@ -1,5 +1,6 @@
 #include <stdexcept>
 #include "ActionFactory.h"
+#include "Action.h"
 
 
 /**
@@ -7,6 +8,7 @@
  */
 ActionFactory::ActionFactory() = default;
 
+//TODO make sure this function works.
 /**
  * @param str - the command to be parsed
  * @return - vector containing each of the words seperated by a whitespace
@@ -39,13 +41,13 @@ BaseAction *ActionFactory::createAction(const string &input) {
             // Create StepAction
             // Assuming StepAction takes an int as a constructor argument
             int numOfSteps = std::stoi(commands[1]);
-            return new StepAction(numOfSteps);
+            return new SimulateStep(numOfSteps);
         }
         else if (type == ORDER) {
             // Create OrderAction
             // Assuming OrderAction takes an int as a constructor argument
             int orderId = std::stoi(commands[1]);
-            return new OrderAction(orderId);
+            return new AddOrder(orderId);
         }
         else if (type == CUSTOMER) {
             // Create CustomerAction
@@ -54,38 +56,38 @@ BaseAction *ActionFactory::createAction(const string &input) {
             string customerType = commands[2];
             int distance = std::stoi(commands[3]);
             int maxOrders = std::stoi(commands[4]);
-            return new CustomerAction(customerName, customerType, distance, maxOrders);
+            return new AddCustomer(customerName, customerType, distance, maxOrders);
         }
         else if (type == ORDERSTATUS) {
             // Create OrderStatusAction
             int orderId = std::stoi(commands[1]);
-            return new OrderStatusAction(orderId);
+            return new PrintOrderStatus(orderId);
         }
         else if (type == CUSTOMERSTATUS) {
             // Create CustomerStatusAction
             int customerId = std::stoi(commands[1]);
-            return new CustomerStatusAction(customerId);
+            return new PrintCustomerStatus(customerId);
         }
         else if (type == VOLUNTEERSTATUS) {
             // Create VolunteerStatusAction
             int volunteerId = std::stoi(commands[1]);
-            return new VolunteerStatusAction(volunteerId);
+            return new PrintVolunteerStatus(volunteerId);
         }
         else if (type == LOG) {
             // Create LogAction
-            return new LogAction();
+            return new PrintActionsLog();
         }
         else if (type == CLOSE) {
             // Create CloseAction
-            return new CloseAction();
+            return new Close();
         }
         else if (type == BACKUP) {
             // Create BackupAction
-            return new BackupAction();
+            return new BackupWareHouse();
         }
         else if (type == RESTORE) {
             // Create RestoreAction
-            return new RestoreAction();
+            return new RestoreWareHouse();
         }
         else {
             // Unknown action type
