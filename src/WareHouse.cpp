@@ -236,7 +236,7 @@ WareHouse::WareHouse(WareHouse &&other) {
     int size = other.volunteers.size(); // Minimizing calls to size()
     volunteers = vector<Volunteer*>(size);
     for (int i = 0; i < size; i++) {
-        volunteers[i] = other.volunteers[i]->clone();
+        volunteers[i] = other.volunteers[i];
         other.volunteers[i] = nullptr;
     }
 
@@ -244,7 +244,7 @@ WareHouse::WareHouse(WareHouse &&other) {
     size = other.customers.size();
     customers = vector<Customer*>(size);
     for (int i = 0; i < size; i++) {
-        customers[i] = other.customers[i]->clone();
+        customers[i] = other.customers[i];
         other.customers[i] = nullptr;
     }
 
@@ -252,7 +252,7 @@ WareHouse::WareHouse(WareHouse &&other) {
     size = other.pendingOrders.size();
     pendingOrders = vector<Order*>(size);
     for (int i = 0; i < size; i++) {
-        pendingOrders[i] = new Order(*other.pendingOrders[i]);
+        pendingOrders[i] = other.pendingOrders[i];
         other.pendingOrders[i] = nullptr;
     }
 
@@ -260,7 +260,7 @@ WareHouse::WareHouse(WareHouse &&other) {
     size = other.inProcessOrders.size();
     inProcessOrders = vector<Order*>(size);
     for (int i = 0; i < size; i++) {
-        inProcessOrders[i] = new Order(*other.inProcessOrders[i]);
+        inProcessOrders[i] = other.inProcessOrders[i];
         other.inProcessOrders[i] = nullptr;
     }
 
@@ -268,7 +268,7 @@ WareHouse::WareHouse(WareHouse &&other) {
     size = other.completedOrders.size();
     completedOrders = vector<Order*>(size);
     for (int i = 0; i < size; i++) {
-        completedOrders[i] = new Order(*other.completedOrders[i]);
+        completedOrders[i] = other.completedOrders[i];
         other.completedOrders[i] = nullptr;
     }
 
@@ -276,12 +276,11 @@ WareHouse::WareHouse(WareHouse &&other) {
     size = other.actionsLog.size();
     actionsLog = vector<BaseAction*>(size);
     for (int i = 0; i < size; i++) {
-        actionsLog[i] = other.actionsLog[i]->clone();
+        actionsLog[i] = other.actionsLog[i];
         other.actionsLog[i] = nullptr;
     }
-
-    // Should I clear the other vectors? I don't know.
-} // I was wrong, this is a tiny bit more disgusting.
+    return *this;
+}
 
 WareHouse& WareHouse::operator=(const WareHouse &other) {
     if(this == &other) return *this; // Self assignment
@@ -316,10 +315,9 @@ WareHouse& WareHouse::operator=(const WareHouse &other) {
     for(const BaseAction * a : other.actionsLog) {
         actionsLog.push_back(a->clone());
     }
-    return *this;
 }
 
-WareHouse& WareHouse::operator=(WareHouse &&other) {
+WareHouse& WareHouse::operator=(WareHouse &&other) noexcept {
     if(this == &other) return *this; // Self assignment
 
     freeResources();
@@ -367,9 +365,6 @@ WareHouse& WareHouse::operator=(WareHouse &&other) {
         other.actionsLog[i] = nullptr;
     }
 
-    other.isOpen = false;
-    other.customerCounter = 0;
-    other.volunteerCounter = 0;
     other.volunteers.clear();
     other.customers.clear();
     other.pendingOrders.clear();
