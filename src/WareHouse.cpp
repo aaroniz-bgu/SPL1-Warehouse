@@ -231,7 +231,8 @@ customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter)
 /*** Move constructor of WareHouse.
  * @param other - the WareHouse to move.
  */
-WareHouse::WareHouse(WareHouse &&other) {
+WareHouse::WareHouse(WareHouse &&other) noexcept : isOpen(other.isOpen),
+customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter) {
     // Copying volunteers
     int size = other.volunteers.size(); // Minimizing calls to size()
     volunteers = vector<Volunteer*>(size);
@@ -279,7 +280,13 @@ WareHouse::WareHouse(WareHouse &&other) {
         actionsLog[i] = other.actionsLog[i];
         other.actionsLog[i] = nullptr;
     }
-    return *this;
+
+    other.volunteers.clear();
+    other.customers.clear();
+    other.pendingOrders.clear();
+    other.inProcessOrders.clear();
+    other.completedOrders.clear();
+    other.actionsLog.clear();
 }
 
 WareHouse& WareHouse::operator=(const WareHouse &other) {
@@ -329,39 +336,39 @@ WareHouse& WareHouse::operator=(WareHouse &&other) noexcept {
     int size = other.volunteers.size(); // Minimizing calls to size()
     volunteers = vector<Volunteer*>(size);
     for (int i = 0; i < size; i++) {
-        volunteers[i] = other.volunteers[i]->clone();
+        volunteers[i] = other.volunteers[i];
         other.volunteers[i] = nullptr;
     }
     // Copying customers
     size = other.customers.size();
     customers = vector<Customer*>(size);
     for (int i = 0; i < size; i++) {
-        customers[i] = other.customers[i]->clone();
+        customers[i] = other.customers[i];
         other.customers[i] = nullptr;
     }
     //
     size = other.pendingOrders.size();
     pendingOrders = vector<Order*>(size);
     for (int i = 0; i < size; i++) {
-        pendingOrders[i] = new Order(*other.pendingOrders[i]);
+        pendingOrders[i] = other.pendingOrders[i];
         other.pendingOrders[i] = nullptr;
     }
     size = other.inProcessOrders.size();
     inProcessOrders = vector<Order*>(size);
     for (int i = 0; i < size; i++) {
-        inProcessOrders[i] = new Order(*other.inProcessOrders[i]);
+        inProcessOrders[i] = other.inProcessOrders[i];
         other.inProcessOrders[i] = nullptr;
     }
     size = other.completedOrders.size();
     completedOrders = vector<Order*>(size);
     for (int i = 0; i < size; i++) {
-        completedOrders[i] = new Order(*other.completedOrders[i]);
+        completedOrders[i] = other.completedOrders[i];
         other.completedOrders[i] = nullptr;
     }
     size = other.actionsLog.size();
     actionsLog = vector<BaseAction*>(size);
     for (int i = 0; i < size; i++) {
-        actionsLog[i] = other.actionsLog[i]->clone();
+        actionsLog[i] = actionsLog[i];
         other.actionsLog[i] = nullptr;
     }
 
