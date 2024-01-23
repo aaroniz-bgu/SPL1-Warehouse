@@ -26,7 +26,8 @@ class WareHouse {
         void open();
 
         // Student defined functions:
-        int addVolunteer(Volunteer* volunteer);
+        int addVolunteer(const string &name, const string &type, const string &volunteerRestriction,
+                         const string &distancePerStep, const string &maxOrders);
         int addCustomer(int type, const string &name, int locationDistance, int maxOrders);
         ~WareHouse();
         WareHouse(const WareHouse &other);
@@ -47,5 +48,5 @@ class WareHouse {
 
         void freeResources();
         void initResources(const string &configFilePath);
-        vector<string>* WareHouse::split(const string &str);
+        static vector<string>* split(const string &str);
 };
