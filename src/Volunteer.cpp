@@ -269,7 +269,7 @@ int DriverVolunteer::getDistancePerStep() const{
  */
 bool DriverVolunteer::decreaseDistanceLeft() {
     if(distanceLeft > 0) {
-        distanceLeft -= distancePerStep;
+        distanceLeft = std::max(0, distanceLeft - distancePerStep);
         return distanceLeft == 0;
     }
     return true;
@@ -304,7 +304,7 @@ void DriverVolunteer::acceptOrder(const Order &order) {
 
 // Decrease distanceLeft by distancePerStep
 void DriverVolunteer::step() {
-    if(activeOrderId != -1) {
+    if(activeOrderId != NO_ORDER) {
         if(distanceLeft != 0 && decreaseDistanceLeft()) {
             completedOrderId = activeOrderId;
             activeOrderId = NO_ORDER;
