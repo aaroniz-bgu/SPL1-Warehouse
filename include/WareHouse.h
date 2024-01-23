@@ -30,9 +30,9 @@ class WareHouse {
         int addCustomer(int type, const string &name, int locationDistance, int maxOrders);
         ~WareHouse();
         WareHouse(const WareHouse &other);
-        WareHouse(WareHouse &&other);
+        WareHouse(WareHouse &&other) noexcept;
         WareHouse& operator=(const WareHouse &other);
-        WareHouse& operator=(WareHouse &&other);
+        WareHouse& operator=(WareHouse &&other) noexcept;
 
     private:
         bool isOpen;
