@@ -28,7 +28,6 @@ void WareHouse::initResources(const std::string &configFilePath) {
                     if(tokens->size() < 5) {
                         throw invalid_argument("customer command must have 4 arguments! (name, type, location, maxOrders)");
                     }
-
                     int type;
                     if((*tokens)[2] == "soldier") {
                         type = 0;
@@ -51,6 +50,7 @@ void WareHouse::initResources(const std::string &configFilePath) {
             }
         }
     }
+    fileReader.close();
 }
 
 /**
