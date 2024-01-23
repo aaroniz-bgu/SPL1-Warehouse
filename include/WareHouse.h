@@ -46,4 +46,6 @@ class WareHouse {
         int volunteerCounter; //For assigning unique volunteer IDs
 
         void freeResources();
+        void initResources(const string &configFilePath);
+        vector<string>* WareHouse::split(const string &str);
 };

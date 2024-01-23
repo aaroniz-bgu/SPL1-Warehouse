@@ -1,13 +1,56 @@
 #include "WareHouse.h"
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include "Volunteer.h"
 #include "Action.h"
 
 WareHouse::WareHouse(const string &configFilePath)  : isOpen(false), customerCounter(0), volunteerCounter(0) {
-    // TODO read file and init members
-    // TODO init vectors
+    //_actionFactory = ActionFactory();
+
     start();
+}
+
+/**
+ * Initializes the resources of the warehouse.
+ * @param configFilePath the path to the configuration file.
+ */
+void WareHouse::initResources(const std::string &configFilePath) {
+    string line;
+    fstream fileReader(configFilePath);
+    if(fileReader.is_open()) {
+        while(getline(fileReader, line)) {
+            if(line[0] != '#') {
+                vector<string> *tokens = split(line);
+                if("customer" == (*tokens)[0]) {
+                    //TODO
+                } else if("volunteer" == (*tokens)[0]) {
+                    //TODO
+                } else {
+                    throw invalid_argument("command "+(*tokens)[0]+" isn't recognized");
+                }
+                delete tokens;
+                tokens = nullptr;
+            }
+        }
+    }
+}
+
+/**
+ * Splits the string by spaces and cleans it from inline-comments:
+ * @param str the string to be split.
+ * @return pointer to a vector which holds the tokens resulted by splitting the input.
+ */
+vector<string>* WareHouse::split(const string &str) {
+    vector<string> *tokens = new vector<string>();
+    //TODO - clean inline comments
+    stringstream ss(str);
+    string token;
+    while(getline(ss, token, ' ')) {
+        tokens->push_back(token);
+    }
+    return tokens;
 }
 
 /**
@@ -231,7 +274,7 @@ customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter)
 /*** Move constructor of WareHouse.
  * @param other - the WareHouse to move.
  */
-WareHouse::WareHouse(WareHouse &&other) {
+WareHouse::WareHouse(WareHouse &&other) noexcept {
     // Copying volunteers
     int size = other.volunteers.size(); // Minimizing calls to size()
     volunteers = vector<Volunteer*>(size);
@@ -319,7 +362,7 @@ WareHouse& WareHouse::operator=(const WareHouse &other) {
     return *this;
 }
 
-WareHouse& WareHouse::operator=(WareHouse &&other) {
+WareHouse& WareHouse::operator=(WareHouse &&other) noexcept {
     if(this == &other) return *this; // Self assignment
 
     freeResources();
