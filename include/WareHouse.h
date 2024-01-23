@@ -8,7 +8,9 @@ using namespace std;
 #include "ActionFactory.h"
 
 class BaseAction;
+class ActionFactory;
 class Volunteer;
+
 
 // Warehouse responsible for Volunteers, Customers Actions, and Orders.
 
@@ -32,6 +34,11 @@ class WareHouse {
         int addVolunteer(Volunteer* volunteer);
         int addCustomer(int type, const string &name, int locationDistance, int maxOrders);
         ~WareHouse(); //Destructor
+        void step();
+        int getCustomerCount() const;
+        int getVolunteerCount() const;
+        int getOrderCount() const;
+
 
 
     private:
@@ -45,5 +52,7 @@ class WareHouse {
         int customerCounter; //For assigning unique customer IDs
         int volunteerCounter; //For assigning unique volunteer IDs
         ActionFactory actionFactory;
+
+        int orderCounter; //For assigning unique order IDs
 
 };
