@@ -139,7 +139,7 @@ int WareHouse::addCustomer(int type, const string &name, int locationDistance, i
         return -1;
     }
     customers.push_back(customer);
-    customerCounter++;
+    customerCounter += 1;
     return customerCounter - 1;
 }
 
