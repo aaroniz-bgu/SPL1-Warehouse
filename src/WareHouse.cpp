@@ -25,6 +25,10 @@ void WareHouse::initResources(const std::string &configFilePath) {
             if(line[0] != '#') {
                 vector<string> *tokens = split(line);
                 if("customer" == (*tokens)[0]) {
+                    if(tokens->size() < 5) {
+                        throw invalid_argument("customer command must have 4 arguments! (name, type, location, maxOrders)");
+                    }
+
                     int type;
                     if((*tokens)[2] == "soldier") {
                         type = 0;
@@ -35,8 +39,10 @@ void WareHouse::initResources(const std::string &configFilePath) {
                     }
                     addCustomer(type, (*tokens)[1], stoi((*tokens)[3]), stoi((*tokens)[4]));
                 } else if("volunteer" == (*tokens)[0]) {
-                    // Maybe change that since it may introduce a bug / undefined behavior.
-                    addVolunteer((*tokens)[1], (*tokens)[2], (*tokens)[3], (*tokens)[4], (*tokens)[5]);
+                    if(tokens->size() < 4) {
+                        throw invalid_argument("volunteer command must have at least 3 arguments! (name, type, coolDown)");
+                    }
+                    addVolunteer(*tokens);
                 } else {
                     throw invalid_argument("command "+(*tokens)[0]+" isn't recognized");
                 }
@@ -101,17 +107,30 @@ void WareHouse::addAction(BaseAction* action) {
  * @param maxOrders For the limited volunteers.
  * @return The volunteers id.
  */
-int WareHouse::addVolunteer(const string &name, const string &type, const string &volunteerRestriction,
-                            const string &distancePerStep, const string &maxOrders) {
+int WareHouse::addVolunteer(const vector<string> &tokens) {
+    string name = tokens[1];
+    string type = tokens[2];
+    int restriction = stoi(tokens[3]);
+    int distancePerStep = -1;
+    int maxOrders = -1;
+    if(type == "limited_collector") {
+        maxOrders = stoi(tokens[4]);
+    } else if (tokens.size() == 5) {
+        distancePerStep = stoi(tokens[4]);
+    } else if (tokens.size() == 6) {
+        distancePerStep = stoi(tokens[4]);
+        maxOrders = stoi(tokens[5]);
+    }
+
     Volunteer *volunteer = nullptr;
     if(type == "collector") {
-         volunteer = new CollectorVolunteer(volunteerCounter, name, stoi(volunteerRestriction));
+         volunteer = new CollectorVolunteer(volunteerCounter, name, restriction);
     } else if (type == "limited_collector") {
-        volunteer = new LimitedCollectorVolunteer(volunteerCounter, name, stoi(volunteerRestriction),stoi(maxOrders));
+        volunteer = new LimitedCollectorVolunteer(volunteerCounter, name, restriction, maxOrders);
     } else if (type == "driver") {
-        volunteer = new DriverVolunteer(volunteerCounter, name, stoi(volunteerRestriction), stoi(distancePerStep));
+        volunteer = new DriverVolunteer(volunteerCounter, name, restriction, distancePerStep);
     } else if (type == "limited_driver") {
-        volunteer = new LimitedDriverVolunteer(volunteerCounter, name, stoi(volunteerRestriction), stoi(distancePerStep), stoi(maxOrders));
+        volunteer = new LimitedDriverVolunteer(volunteerCounter, name, restriction, distancePerStep, maxOrders);
     } else {
         throw invalid_argument("volunteer type "+type+" isn't recognized");
     }

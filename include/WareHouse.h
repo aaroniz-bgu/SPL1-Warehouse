@@ -26,8 +26,7 @@ class WareHouse {
         void open();
 
         // Student defined functions:
-        int addVolunteer(const string &name, const string &type, const string &volunteerRestriction,
-                         const string &distancePerStep, const string &maxOrders);
+        int addVolunteer(const vector<string> &tokens);
         int addCustomer(int type, const string &name, int locationDistance, int maxOrders);
         ~WareHouse();
         WareHouse(const WareHouse &other);
