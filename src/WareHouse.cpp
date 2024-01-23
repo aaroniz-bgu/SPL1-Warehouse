@@ -8,6 +8,7 @@
 
 WareHouse::WareHouse(const string &configFilePath)  : isOpen(false), customerCounter(0), volunteerCounter(0) {
     //_actionFactory = ActionFactory();
+    initResources(configFilePath);
 
     start();
 }
@@ -24,9 +25,18 @@ void WareHouse::initResources(const std::string &configFilePath) {
             if(line[0] != '#') {
                 vector<string> *tokens = split(line);
                 if("customer" == (*tokens)[0]) {
-                    //TODO
+                    int type;
+                    if((*tokens)[2] == "soldier") {
+                        type = 0;
+                    } else if((*tokens)[2] == "civilian") {
+                        type = 1;
+                    } else {
+                        throw invalid_argument("customer type "+(*tokens)[2]+" isn't recognized");
+                    }
+                    addCustomer(type, (*tokens)[1], stoi((*tokens)[3]), stoi((*tokens)[4]));
                 } else if("volunteer" == (*tokens)[0]) {
-                    //TODO
+                    // Maybe change that since it may introduce a bug / undefined behavior.
+                    addVolunteer((*tokens)[1], (*tokens)[2], (*tokens)[3], (*tokens)[4], (*tokens)[5]);
                 } else {
                     throw invalid_argument("command "+(*tokens)[0]+" isn't recognized");
                 }
@@ -82,9 +92,32 @@ void WareHouse::addAction(BaseAction* action) {
     actionsLog.push_back(action);
 }
 
-int WareHouse::addVolunteer(Volunteer* volunteer) {
-    //TODO - like addCustomer;
-    return -1;
+/**
+ * Adds a new volunteer to the current warehouse.
+ * @param name Volunteer's name
+ * @param type The type of the volunteer.
+ * @param volunteerRestriction coolDown/maxDistance for Collector/Driver.
+ * @param distancePerStep distancePerStep for Driver.
+ * @param maxOrders For the limited volunteers.
+ * @return The volunteers id.
+ */
+int WareHouse::addVolunteer(const string &name, const string &type, const string &volunteerRestriction,
+                            const string &distancePerStep, const string &maxOrders) {
+    Volunteer *volunteer = nullptr;
+    if(type == "collector") {
+         volunteer = new CollectorVolunteer(volunteerCounter, name, stoi(volunteerRestriction));
+    } else if (type == "limited_collector") {
+        volunteer = new LimitedCollectorVolunteer(volunteerCounter, name, stoi(volunteerRestriction),stoi(maxOrders));
+    } else if (type == "driver") {
+        volunteer = new DriverVolunteer(volunteerCounter, name, stoi(volunteerRestriction), stoi(distancePerStep));
+    } else if (type == "limited_driver") {
+        volunteer = new LimitedDriverVolunteer(volunteerCounter, name, stoi(volunteerRestriction), stoi(distancePerStep), stoi(maxOrders));
+    } else {
+        throw invalid_argument("volunteer type "+type+" isn't recognized");
+    }
+    volunteers.push_back(volunteer);
+    volunteerCounter += 1;
+    return volunteerCounter - 1;
 }
 
 /**
