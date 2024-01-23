@@ -261,7 +261,7 @@ WareHouse::~WareHouse() {
  */
 WareHouse::WareHouse(const WareHouse &other) : isOpen(other.isOpen),
 customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter) {
-    int size = other.volunteers.size(); // Minimizing calls to size()
+    unsigned long size = other.volunteers.size(); // Minimizing calls to size()
     volunteers = vector<Volunteer*>(size);
     for (int i = 0; i < size; i++) {
         volunteers[i] = other.volunteers[i]->clone();
@@ -298,7 +298,7 @@ customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter)
  */
 WareHouse::WareHouse(WareHouse &&other) noexcept : isOpen(other.isOpen),
 customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter) {
-    int size = other.volunteers.size(); // Minimizing calls to size()
+    unsigned long size = other.volunteers.size(); // Minimizing calls to size()
     volunteers = vector<Volunteer*>(size);
     for (int i = 0; i < size; i++) {
         volunteers[i] = other.volunteers[i];
@@ -380,7 +380,7 @@ WareHouse& WareHouse::operator=(WareHouse &&other) noexcept {
     customerCounter = other.customerCounter;
     volunteerCounter = other.volunteerCounter;
 
-    int size = other.volunteers.size(); // Minimizing calls to size()
+    unsigned long size = other.volunteers.size(); // Minimizing calls to size()
     volunteers = vector<Volunteer*>(size);
     for (int i = 0; i < size; i++) {
         volunteers[i] = other.volunteers[i];
