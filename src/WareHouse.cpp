@@ -1,8 +1,10 @@
 #include "WareHouse.h"
+#include "Action.h"
 
 #include <iostream>
 
-WareHouse::WareHouse(const string &configFilePath)  : isOpen(false), customerCounter(0), volunteerCounter(0) {
+WareHouse::WareHouse(const string &configFilePath)  : isOpen(false), customerCounter(0),
+volunteerCounter(0), orderCounter(0) {
     // TODO read file and init members
 
     start();
@@ -11,12 +13,34 @@ WareHouse::WareHouse(const string &configFilePath)  : isOpen(false), customerCou
 void WareHouse::start() { //TODO Listener loop here
     cout << "Warehouse is open!" << endl;
     while(isOpen) {
+
+        // Make a new action, then make sure it's status isn't an error, if it isn't baseAction.act(this) should be called.
         string input;
+        try {
+            BaseAction *action = actionFactory.createAction(input);
+            // TODO make sure this is right and implement the rest of the logic.
+
+            if (action != nullptr) {
+                if (action->getStatus() != ActionStatus::ERROR) {
+                    action->act(*this);
+                    // TODO add the action to the log
+                }
+                else {
+
+                }
+
+            }
+        }
+        catch (exception &ex)
+        {
+
+        }
     }
 }
 
 void WareHouse::addOrder(Order* order) {
-//TODO
+    pendingOrders.push_back(order);
+    orderCounter++;
 }
 
 /**
@@ -123,4 +147,29 @@ WareHouse::~WareHouse() {
     for (BaseAction * action : actionsLog) {
         delete action; //FIXME - yet to implement destructor of BaseAction
     }
+}
+
+void WareHouse::step() {
+    //TODO implement this.
+}
+
+/**
+ * @return amount of customers made, for id purposes.
+ */
+int WareHouse::getCustomerCount() const {
+    return customerCounter;
+}
+
+/**
+ * @return amount of volunteers made, for id purposes.
+ */
+int WareHouse::getVolunteerCount() const {
+    return volunteerCounter;
+}
+
+/**
+ * @return amount of orders made, for id purposes.
+ */
+int WareHouse::getOrderCount() const {
+    return orderCounter;
 }
