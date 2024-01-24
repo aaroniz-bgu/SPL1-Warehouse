@@ -420,20 +420,20 @@ int WareHouse::getOrderCount() const {
 /**
  * @return pendingOrders vector
  */
-const vector<Order*>& WareHouse::GetPendingOrders() const {
+const vector<Order*>& WareHouse::getPendingOrders() const {
     return pendingOrders;
 }
 
 /**
  * @return inProcessOrders vector
  */
-const vector<Order*>& WareHouse::GetInProcessOrders() const {
+const vector<Order*>& WareHouse::getInProcessOrders() const {
     return inProcessOrders;
 }
 
 /**
  * @return completedOrders vector
  */
-const vector<Order*>& WareHouse::GetCompletedOrders() const {
+const vector<Order*>& WareHouse::getCompletedOrders() const {
     return completedOrders;
 }
