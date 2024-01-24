@@ -5,6 +5,10 @@
 #include "Volunteer.h"
 #include "Action.h"
 
+/**
+ * Initializes the warehouse according to the config file. all ids start at 0.
+ * @param configFilePath
+ */
 WareHouse::WareHouse(const string &configFilePath)  : isOpen(false), customerCounter(0),
 volunteerCounter(0), orderCounter(0) {
     // TODO read file and init members
@@ -27,8 +31,8 @@ void WareHouse::start() { //TODO Listener loop here
             // TODO make sure this is right and implement the rest of the logic.
 
             if (action != nullptr) {
+                action->act(*this);
                 if (action->getStatus() != ActionStatus::ERROR) {
-                    action->act(*this);
                     // TODO add the action to the log
                 }
                 else {
@@ -63,9 +67,15 @@ void WareHouse::addAction(BaseAction* action) {
     actionsLog.push_back(action);
 }
 
+/**
+ * Adds a volunteer to the volunteer vector.
+ * @param volunteer
+ * @return the id of the volunteer added
+ */
 int WareHouse::addVolunteer(Volunteer* volunteer) {
-    //TODO - like addCustomer;
-    return -1;
+    volunteers.push_back(volunteer);
+    volunteerCounter += 1;
+    return volunteer->getId();
 }
 
 /**
