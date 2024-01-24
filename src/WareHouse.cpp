@@ -173,3 +173,25 @@ int WareHouse::getVolunteerCount() const {
 int WareHouse::getOrderCount() const {
     return orderCounter;
 }
+
+/**
+ * @return pendingOrders vector
+ */
+const vector<Order*>& WareHouse::GetPendingOrders() const {
+    return pendingOrders;
+}
+
+/**
+ * @return inProcessOrders vector
+ */
+const vector<Order*>& WareHouse::GetInProcessOrders() const {
+    return inProcessOrders;
+}
+
+/**
+ * @return completedOrders vector
+ */
+const vector<Order*>& WareHouse::GetCompletedOrders() const {
+    return completedOrders;
+}
+
