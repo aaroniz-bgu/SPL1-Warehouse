@@ -109,7 +109,6 @@ void AddOrder::act(WareHouse &wareHouse) {
         int orderID = wareHouse.getOrderCount()+1; //TODO make sure order counter is updated
         Order* order = new Order(orderID ,customerId, customerDistance);
         wareHouse.addOrder(order);
-        order = nullptr;
         complete();
     }
     // Customer doesn't exist
