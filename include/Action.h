@@ -15,6 +15,7 @@ enum class CustomerType{
 
 
 class Customer;
+extern WareHouse* backup;
 
 class BaseAction{
     public:

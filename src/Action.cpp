@@ -69,12 +69,12 @@ SimulateStep::SimulateStep(int numOfSteps) : BaseAction(), numOfSteps(numOfSteps
  // TODO  check to make sure that this is what needs to happen.
 void SimulateStep::act(WareHouse &wareHouse) {
     for (int i = 0;i<numOfSteps;i++)
-        wareHouse.step();
+        wareHouse.step(); //Could also make the actual step here, just thought it would be easier and cleaner to do it in WareHouse
     complete();
 }
 
 /**
- * @return "step <number_of_steps> <status>"
+ * @return "step (number_of_steps) (status)"
  */
 string SimulateStep::toString() const {
     return "step "+to_string(numOfSteps)+" "+getStatusString();
@@ -119,7 +119,7 @@ void AddOrder::act(WareHouse &wareHouse) {
 }
 
 /**
- * @return "order <customer_id> <status>"
+ * @return "order (customer_id) (status)"
  */
 string AddOrder::toString() const {
     return "order "+to_string(customerId)+" "+getStatusString();
@@ -156,7 +156,7 @@ AddCustomer *AddCustomer::clone() const {
 }
 
 /**
- * @return "customer <customer_name> <customer_type> <customer_distance> <max_orders> <status>"
+ * @return "customer (customer_name) (customer_type) (customer_distance) (max_orders) (status)"
  */
 string AddCustomer::toString() const {
     return "customer "+customerName+" "+(customerType == CustomerType::Soldier ? "soldier" : "civilian")+
@@ -192,7 +192,7 @@ PrintOrderStatus *PrintOrderStatus::clone() const {
 }
 
 /**
- * @return "orderStatus <order_id> <status>"
+ * @return "orderStatus (order_id) (status)"
  */
 string PrintOrderStatus::toString() const {
     return "orderStatus "+to_string(orderId)+" "+getStatusString();
@@ -256,7 +256,7 @@ PrintCustomerStatus *PrintCustomerStatus::clone() const {
 }
 
 /**
- * @return "customerStatus <customer_id> <status>"
+ * @return "customerStatus (customer_id) (status)"
  */
 string PrintCustomerStatus::toString() const {
     return "customerStatus "+to_string(customerId)+" "+getStatusString();
@@ -292,7 +292,7 @@ PrintVolunteerStatus *PrintVolunteerStatus::clone() const {
 }
 
 /**
- * @return volunteerStatus <volunteer_id> <status>
+ * @return volunteerStatus (volunteer_id) (status)
  */
 string PrintVolunteerStatus::toString() const {
     return "volunteerStatus "+to_string(VolunteerId)+" "+getStatusString();
@@ -307,7 +307,7 @@ PrintActionsLog::PrintActionsLog() : BaseAction() { }
 
 /**
  * Prints each of the actions up to this action not including in order with the following syntax:
- * <action_n_name> <action_n_args> <action_n_status>
+ * (action_n_name) (action_n_args) (action_n_status)
  * @param wareHouse
  */
 void PrintActionsLog::act(WareHouse &wareHouse) {
@@ -323,61 +323,143 @@ PrintActionsLog *PrintActionsLog::clone() const {
 }
 
 /**
- * @return log <status>
+ * @return log (status)
  */
 string PrintActionsLog::toString() const {
     return "log "+getStatusString();
 }
 
-// TODO finish everything below this line.
 
 //  Implementations for Close
-Close::Close() {
+/**
+ *  This action prints all orders with their status. Then, it closes the warehouse – changes
+ *  its isOpen status, exits the loop and finishes the program.
+ */
+Close::Close() : BaseAction() { }
 
-}
+/**
+ * gets an order and prints it in the following format:
+ * OrderID: (order_n_id) , CustomerID:(customer_n_id) , OrderStatus: (order_n_status)
+ * @param order - the order to be printed
+ */
+void printOrderDetails(const Order* order) {
+    std::cout << "OrderID: " << order->getId()
+              << " , CustomerID: " << order->getCustomerId()
+              << " , OrderStatus: ";
+    switch (order->getStatus()) {
+        case OrderStatus::PENDING:
+            std::cout << "Pending";
+            break;
+        case OrderStatus::COLLECTING:
+            std::cout << "Collecting";
+            break;
+        case OrderStatus::DELIVERING:
+            std::cout << "Delivering";
+            break;
+        case OrderStatus::COMPLETED:
+            std::cout << "Completed";
+            break;
+        default:
+            std::cout << "Unknown";
+    }
+    std::cout << std::endl;
+};
 
+/**
+ * Prints all orders with their status, closes the warehouse and exits the loop.
+ */
 void Close::act(WareHouse &wareHouse) {
+    for (const Order* order : wareHouse.GetPendingOrders()) {
+        if (order) printOrderDetails(order); // if (order) is to check that it's not a nullptr. (though it shouldn't be)
+    }
+    for (const Order* order : wareHouse.GetInProcessOrders()) {
+        if (order) printOrderDetails(order);
+    }
+    for (const Order* order : wareHouse.GetCompletedOrders()) {
+        if (order) printOrderDetails(order);
+    }
 
+    wareHouse.close();
+    complete();
 }
 
 Close *Close::clone() const {
-    return nullptr;
+    return new Close(*this);
 }
 
 string Close::toString() const {
-    return std::string();
+    return "close "+getStatusString();
 }
 
 //  Implementations for BackupWareHouse
-BackupWareHouse::BackupWareHouse() {
+/**
+ * Saves all warehouse information (customers, volunteers, orders, and
+ * actions history) in a global variable called “backup”. The program can keep only one backup: If
+ * it's called multiple times, the latest warehouse’s status will be stored and overwrite the
+ * previous one.
+ */
+BackupWareHouse::BackupWareHouse() : BaseAction() { }
 
-}
-
+/**
+ * Saves all warehouse information (customers, volunteers, orders, and
+ * actions history) in the global variable called “backup”. Erasing the previous backup if there was one.
+ * @param wareHouse
+ */
 void BackupWareHouse::act(WareHouse &wareHouse) {
+    if (backup != nullptr) {
+        delete backup;
+        backup = nullptr;
+    }
 
+    // Creates the new backup (copying the warehouse)
+    backup = new WareHouse(wareHouse);
+
+    complete();
 }
 
 BackupWareHouse *BackupWareHouse::clone() const {
-    return nullptr;
+    return new BackupWareHouse(*this);
 }
 
+/**
+ * @return "backup (status)"
+ */
 string BackupWareHouse::toString() const {
-    return std::string();
+    return "backup "+getStatusString();
 }
 
 //  Implementations for RestoreWareHouse
-RestoreWareHouse::RestoreWareHouse() {
+/**
+ * Restore the backed-up warehouse status and overwrite the current
+ * warehouse status (warehouse itself, customers, volunteers, orders, and actions history)
+ * will be an error if there is no backup
+ */
+RestoreWareHouse::RestoreWareHouse() : BaseAction() { }
 
-}
-
+/**
+ * Restores the backed-up warehouse, overwriting the current warehouse if they are different.
+ * Will be an error if there is no backup.
+ * @param wareHouse to be overwritten
+ */
 void RestoreWareHouse::act(WareHouse &wareHouse) {
-
+    // Check if backup exists
+    if (backup == nullptr) {
+        error("No backup available");
+    }
+    else {
+        // Overwrite the current warehouse state with the backup with the = operator, should erase current warehouse data.
+        wareHouse = *backup;
+        complete();
+    }
 }
 
 RestoreWareHouse *RestoreWareHouse::clone() const {
-    return nullptr;
+    return new RestoreWareHouse(*this);
 }
 
+/**
+ * @return "restore (status)"
+ */
 string RestoreWareHouse::toString() const {
-    return std::string();
+    return "restore "+getStatusString();
 }
