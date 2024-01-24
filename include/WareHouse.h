@@ -14,8 +14,6 @@ class Volunteer;
 
 // Warehouse responsible for Volunteers, Customers Actions, and Orders.
 
-//TODO Implement rule-of-5 by assignment-instructions this class must to do so since it has resources.
-
 class WareHouse {
 
     public:
@@ -33,16 +31,18 @@ class WareHouse {
         // Student defined functions and variables:
         int addVolunteer(Volunteer* volunteer);
         int addCustomer(int type, const string &name, int locationDistance, int maxOrders);
+  
         ~WareHouse(); //Destructor
-        void step();
         int getCustomerCount() const;
         int getVolunteerCount() const;
         int getOrderCount() const;
         const vector<Order*> &GetPendingOrders() const;
         const vector<Order*> &GetInProcessOrders() const;
         const vector<Order*> &GetCompletedOrders() const;
-
-
+        WareHouse(const WareHouse &other);
+        WareHouse(WareHouse &&other) noexcept;
+        WareHouse& operator=(const WareHouse &other);
+        WareHouse& operator=(WareHouse &&other) noexcept;
 
     private:
         bool isOpen;
@@ -54,8 +54,8 @@ class WareHouse {
         vector<Customer*> customers;
         int customerCounter; //For assigning unique customer IDs
         int volunteerCounter; //For assigning unique volunteer IDs
+
         ActionFactory actionFactory;
-
         int orderCounter; //For assigning unique order IDs
-
+        void freeResources();
 };
