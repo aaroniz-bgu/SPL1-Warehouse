@@ -32,26 +32,36 @@ vector<string> splitIntoWords(const string& str) {
     return words;
 }
 
+/**
+ * Creates a new action according to the input, to use the action you get you have to use the act method.
+ * @param input - string with each argument seperated by a space in the following format:
+ * (action_name) (action_args) - (e.g. customer Ben soldier 4 2)
+ * These are the different actions and args required:
+ * step (number_of_steps),
+ * order (customer_id),
+ * customer (customer_name) (customer_type) (customer_distance) (max_orders),
+ * orderStatus (order_id),
+ * customerStatus (customer_id),
+ * volunteerStatus (volunteer_id),
+ * log,
+ * close,
+ * backup,
+ * restore
+ * @return - A new action according to the action_name, to use the action you have to use the act method.
+ */
 BaseAction *ActionFactory::createAction(const string &input) {
     vector<string> commands = splitIntoWords(input);
     if (!commands.empty()) {
         string type = commands[0]; // First word should be the action type
-
         if (type == STEP) {
-            // Create StepAction
-            // Assuming StepAction takes an int as a constructor argument
             int numOfSteps = std::stoi(commands[1]);
             return new SimulateStep(numOfSteps);
         }
         else if (type == ORDER) {
-            // Create OrderAction
-            // Assuming OrderAction takes an int as a constructor argument
             int orderId = std::stoi(commands[1]);
             return new AddOrder(orderId);
         }
         else if (type == CUSTOMER) {
-            // Create CustomerAction
-            // Assuming CustomerAction constructor takes appropriate arguments
             string customerName = commands[1];
             string customerType = commands[2];
             int distance = std::stoi(commands[3]);
@@ -59,43 +69,34 @@ BaseAction *ActionFactory::createAction(const string &input) {
             return new AddCustomer(customerName, customerType, distance, maxOrders);
         }
         else if (type == ORDERSTATUS) {
-            // Create OrderStatusAction
             int orderId = std::stoi(commands[1]);
             return new PrintOrderStatus(orderId);
         }
         else if (type == CUSTOMERSTATUS) {
-            // Create CustomerStatusAction
             int customerId = std::stoi(commands[1]);
             return new PrintCustomerStatus(customerId);
         }
         else if (type == VOLUNTEERSTATUS) {
-            // Create VolunteerStatusAction
             int volunteerId = std::stoi(commands[1]);
             return new PrintVolunteerStatus(volunteerId);
         }
         else if (type == LOG) {
-            // Create LogAction
             return new PrintActionsLog();
         }
         else if (type == CLOSE) {
-            // Create CloseAction
             return new Close();
         }
         else if (type == BACKUP) {
-            // Create BackupAction
             return new BackupWareHouse();
         }
         else if (type == RESTORE) {
-            // Create RestoreAction
             return new RestoreWareHouse();
         }
         else {
             // Unknown action type
-            // Handle unknown action type, maybe throw an exception or return a null pointer
         }
     } else {
         // Received empty command
-        // Handle this scenario, maybe throw an exception or return a null pointer
     }
 }
 

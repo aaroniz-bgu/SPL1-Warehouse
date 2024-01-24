@@ -4,10 +4,7 @@
 #include <vector>
 using std::string;
 using std::vector;
-class BaseAction; //Couldn't include since it makes a circular include, it's troublesome, need to think of a proper solution.
-//TODO decide whether to add each of the different action type classes here or find a better solution.
-
-
+class BaseAction;
 
 #define STEP "step"
 #define ORDER "order"
