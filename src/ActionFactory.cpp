@@ -92,6 +92,33 @@ BaseAction *ActionFactory::createAction(const string &input) {
         else if (type == RESTORE) {
             return new RestoreWareHouse();
         }
+        else if (type == VOLUNTEER) {
+            string volunteerName = commands[1];
+            string volunteerRole = commands[2];
+            if (volunteerRole == "collector") {
+                int cooldown = std::stoi(commands[3]);
+                return new AddVolunteer(volunteerName, cooldown, NOT_LIMITED);
+            }
+            else if (volunteerRole == "limited_collector") {
+                int cooldown = std::stoi(commands[3]);
+                int maxOrders = std::stoi(commands[4]);
+                return new AddVolunteer(volunteerName, cooldown, maxOrders);
+            }
+            else if (volunteerRole == "driver") {
+                int maxDistance = std::stoi(commands[3]);
+                int distancePerStep = std::stoi(commands[4]);
+                return new AddVolunteer(volunteerName, maxDistance, distancePerStep, NOT_LIMITED);
+            }
+            else if (volunteerRole == "limited_driver") {
+                int maxDistance = std::stoi(commands[3]);
+                int distancePerStep = std::stoi(commands[4]);
+                int maxOrders = std::stoi(commands[5]);
+                return new AddVolunteer(volunteerName, maxDistance, distancePerStep, maxOrders);
+            }
+            else {
+                // Unknown volunteer role
+            }
+        }
         else {
             // Unknown action type
         }

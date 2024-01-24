@@ -16,6 +16,8 @@ class BaseAction;
 #define CLOSE "close"
 #define BACKUP "backup"
 #define RESTORE "restore"
+#define VOLUNTEER "volunteer"
+#define NOT_LIMITED (-1)
 
 class ActionFactory {
 public:
