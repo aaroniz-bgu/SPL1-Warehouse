@@ -141,6 +141,12 @@ string CollectorVolunteer::toString() const {
     return output;
 }
 
+void CollectorVolunteer::visit(vector<Volunteer *> &freeCollectors, vector<Volunteer *> &freeDrivers) {
+    if(!isBusy()) {
+        freeCollectors.push_back(this);
+    }
+}
+
 // ###########################################################################
 // ###                      LimitedCollectorVolunteer                      ###
 // ###########################################################################
@@ -329,6 +335,12 @@ string DriverVolunteer::toString() const {
     }
     output += "\nOrdersLeft: No Limit";
     return output;
+}
+
+void DriverVolunteer::visit(vector<Volunteer *> &freeCollectors, vector<Volunteer *> &freeDrivers) {
+    if(!isBusy()) {
+        freeDrivers.push_back(this);
+    }
 }
 
 // ########################################################################### //
