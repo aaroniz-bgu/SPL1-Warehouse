@@ -40,6 +40,7 @@ class WareHouse {
         const vector<Order*> &getInProcessOrders() const;
         const vector<Order*> &getCompletedOrders() const;
         void step();
+        void advanceOrder(int orderId);
         WareHouse(const WareHouse &other);
         WareHouse(WareHouse &&other) noexcept;
         WareHouse& operator=(const WareHouse &other);
