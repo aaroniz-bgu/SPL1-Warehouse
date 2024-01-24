@@ -69,7 +69,7 @@ SimulateStep::SimulateStep(int numOfSteps) : BaseAction(), numOfSteps(numOfSteps
  // TODO  check to make sure that this is what needs to happen.
 void SimulateStep::act(WareHouse &wareHouse) {
     for (int i = 0;i<numOfSteps;i++) {
-        //this->step(); here.
+        wareHouse.step();
     }
 
     complete();
@@ -370,13 +370,13 @@ void printOrderDetails(const Order* order) {
  * Prints all orders with their status, closes the warehouse and exits the loop.
  */
 void Close::act(WareHouse &wareHouse) {
-    for (const Order* order : wareHouse.GetPendingOrders()) {
+    for (const Order* order : wareHouse.getPendingOrders()) {
         if (order) printOrderDetails(order); // if (order) is to check that it's not a nullptr. (though it shouldn't be)
     }
-    for (const Order* order : wareHouse.GetInProcessOrders()) {
+    for (const Order* order : wareHouse.getInProcessOrders()) {
         if (order) printOrderDetails(order);
     }
-    for (const Order* order : wareHouse.GetCompletedOrders()) {
+    for (const Order* order : wareHouse.getCompletedOrders()) {
         if (order) printOrderDetails(order);
     }
 
