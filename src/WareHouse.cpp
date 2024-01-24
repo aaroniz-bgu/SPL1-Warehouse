@@ -396,10 +396,6 @@ void WareHouse::freeResources() {
     actionsLog.clear();
 }
 
-void WareHouse::step() {
-    //TODO implement this.
-}
-
 /**
  * @return amount of customers made, for id purposes.
  */
@@ -441,4 +437,3 @@ const vector<Order*>& WareHouse::GetInProcessOrders() const {
 const vector<Order*>& WareHouse::GetCompletedOrders() const {
     return completedOrders;
 }
-
