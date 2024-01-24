@@ -68,8 +68,10 @@ SimulateStep::SimulateStep(int numOfSteps) : BaseAction(), numOfSteps(numOfSteps
  */
  // TODO  check to make sure that this is what needs to happen.
 void SimulateStep::act(WareHouse &wareHouse) {
-    for (int i = 0;i<numOfSteps;i++)
-        wareHouse.step(); //Could also make the actual step here, just thought it would be easier and cleaner to do it in WareHouse
+    for (int i = 0;i<numOfSteps;i++) {
+        //this->step(); here.
+    }
+
     complete();
 }
 
