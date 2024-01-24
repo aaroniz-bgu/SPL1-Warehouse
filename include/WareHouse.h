@@ -39,6 +39,7 @@ class WareHouse {
         const vector<Order*> &getPendingOrders() const;
         const vector<Order*> &getInProcessOrders() const;
         const vector<Order*> &getCompletedOrders() const;
+        void step();
         WareHouse(const WareHouse &other);
         WareHouse(WareHouse &&other) noexcept;
         WareHouse& operator=(const WareHouse &other);
