@@ -506,7 +506,7 @@ void WareHouse::step() {
         else if(orderStatus == OrderStatus::COLLECTING) {
             if (!freeDrivers.empty()) {
                 Volunteer *driver = nullptr;
-                for(int j = 0; j < freeDrivers.size(); j++) {
+                for(int j = 0; j < freeDrivers.size() && driver == nullptr; j++) {
                     if(freeDrivers[j]->canTakeOrder(*order)) {
                         driver = freeDrivers[j];
                     }
