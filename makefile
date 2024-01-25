@@ -1,8 +1,8 @@
 # Define some Makefile variables for the compiler and compiler flags
 CC = g++
 CFLAGS = -g -Wall -Weffc++ -std=c++11
-BIN = ../bin
-SRC = ../src
+BIN = bin
+SRC = src
 
 objects = $(BIN)/Action.o $(BIN)/ActionFactory.o $(BIN)/Customer.o $(BIN)/main.o $(BIN)/Order.o $(BIN)/Volunteer.o $(BIN)/WareHouse.o
 
