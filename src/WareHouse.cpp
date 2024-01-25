@@ -52,6 +52,7 @@ void WareHouse::start() { //TODO Listener loop here
     while(isOpen) {
         string input;
         getline(cin, input);  // Read user input
+        //FIXME - REMOVE THIS WHEN COMPILING FOR SUBMISSION
         removeCarriageReturn(input);
         try {
             BaseAction *action = actionFactory.createAction(input);
@@ -484,8 +485,7 @@ void WareHouse::step() {
         volunteer->visit(freeCollectors, freeDrivers);
     }
 
-    unsigned long size = pendingOrders.size();
-    for(int i = 0; i < size; i++) {
+    for(int i = 0; i < pendingOrders.size(); i++) {
         Order *order = pendingOrders[i];
         OrderStatus orderStatus = order->getStatus();
         if(orderStatus == OrderStatus::PENDING) {
@@ -513,19 +513,18 @@ void WareHouse::step() {
                     freeDrivers.erase(freeDrivers.begin() + j);
 
                     pendingOrders.erase(find(pendingOrders.begin(), pendingOrders.end(), order));
-                    i--;
+                    i--; // since we're updating the vector mid-running.
                 }
             }
         } else { // That's redundant, but it's here just in case.
             order->setStatus(OrderStatus::COMPLETED);
             pendingOrders.erase(find(pendingOrders.begin(), pendingOrders.end(), order));
-            i--;
+            i--; // since we're updating the vector mid-running.
             completedOrders.push_back(order);
         }
     }
 
-    size = volunteers.size();
-    for(int i = 0; i < size; i++) {
+    for(int i = 0; i < volunteers.size(); i++) {
         Volunteer *volunteer = volunteers[i];
         int activeId = volunteer->getActiveOrderId();
         if(activeId != NO_ORDER) {
