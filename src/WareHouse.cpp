@@ -2,8 +2,8 @@
 #include "Action.h"
 
 #include <iostream>
+#include <fstream>
 #include "Volunteer.h"
-#include "Action.h"
 
 /**
  * Initializes the warehouse according to the config file. all ids start at 0.
@@ -11,10 +11,27 @@
  */
 WareHouse::WareHouse(const string &configFilePath)  : isOpen(false), customerCounter(0),
 volunteerCounter(0), orderCounter(0) {
-    // TODO read file and init members
-    // TODO init vectors
-    start();
+    std::ifstream configFile(configFilePath);
+    std::string line;
+    if (!configFile.is_open()) {
+        std::cout << "Failed to open config file: " << configFilePath << std::endl;
+        return;
+    }
+    while (getline(configFile, line)) {
+        if (line.empty() || line[0] == '#') continue; // Skip empty lines and comments
+
+        // Create and execute the action
+        BaseAction* action = actionFactory.createAction(line);
+        if (action) {
+            action->act(*this);
+            delete action; // Clean up after executing the action
+        } else {
+            std::cout << "Error processing line in config file: " << line << std::endl;
+        }
+    }
+    configFile.close();
 }
+
 
 /**
  * Starts the warehouse.
@@ -23,29 +40,25 @@ volunteerCounter(0), orderCounter(0) {
 void WareHouse::start() { //TODO Listener loop here
     cout << "Warehouse is open!" << endl;
     while(isOpen) {
-
-        // Make a new action, then make sure it's status isn't an error, if it isn't baseAction.act(this) should be called.
         string input;
+        getline(cin, input);  // Read user input
         try {
             BaseAction *action = actionFactory.createAction(input);
-            // TODO make sure this is right and implement the rest of the logic.
-
-            if (action != nullptr) {
+            if (action) {
                 action->act(*this);
-                if (action->getStatus() != ActionStatus::ERROR) {
-                    // TODO add the action to the log
-                }
-                else {
-
-                }
-
+                // If the action resulted in an error it should have already printed the error.
+                actionsLog.push_back(action);
+            }
+            else {
+                cout << "Unrecognizable action!" << endl;
             }
         }
         catch (exception &ex)
         {
-
+            std::cout << "unknown error" << std::endl;
         }
     }
+    // Cleanup here if needed, I think the Close() action should handle this, not sure though.
 }
 
 /**
