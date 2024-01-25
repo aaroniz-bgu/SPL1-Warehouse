@@ -62,7 +62,7 @@ CollectorVolunteer *CollectorVolunteer::clone() const  {
 }
 
 void CollectorVolunteer::step()  {
-    if(activeOrderId != -1) {
+    if(activeOrderId != NO_ORDER) {
         if(timeLeft != 0 && decreaseCoolDown()) {
             completedOrderId = activeOrderId;
             activeOrderId = NO_ORDER;
@@ -139,6 +139,12 @@ string CollectorVolunteer::toString() const {
     }
     output += "\nOrdersLeft: No Limit";
     return output;
+}
+
+void CollectorVolunteer::visit(vector<Volunteer *> &freeCollectors, vector<Volunteer *> &freeDrivers) {
+    if(!isBusy()) {
+        freeCollectors.push_back(this);
+    }
 }
 
 // ###########################################################################
@@ -329,6 +335,12 @@ string DriverVolunteer::toString() const {
     }
     output += "\nOrdersLeft: No Limit";
     return output;
+}
+
+void DriverVolunteer::visit(vector<Volunteer *> &freeCollectors, vector<Volunteer *> &freeDrivers) {
+    if(!isBusy()) {
+        freeDrivers.push_back(this);
+    }
 }
 
 // ########################################################################### //

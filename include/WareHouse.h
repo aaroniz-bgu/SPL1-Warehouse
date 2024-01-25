@@ -36,9 +36,11 @@ class WareHouse {
         int getCustomerCount() const;
         int getVolunteerCount() const;
         int getOrderCount() const;
-        const vector<Order*> &GetPendingOrders() const;
-        const vector<Order*> &GetInProcessOrders() const;
-        const vector<Order*> &GetCompletedOrders() const;
+        const vector<Order*> &getPendingOrders() const;
+        const vector<Order*> &getInProcessOrders() const;
+        const vector<Order*> &getCompletedOrders() const;
+        void step();
+        void advanceOrder(int orderId);
         WareHouse(const WareHouse &other);
         WareHouse(WareHouse &&other) noexcept;
         WareHouse& operator=(const WareHouse &other);

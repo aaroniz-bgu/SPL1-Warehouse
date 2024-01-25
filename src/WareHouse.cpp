@@ -420,20 +420,107 @@ int WareHouse::getOrderCount() const {
 /**
  * @return pendingOrders vector
  */
-const vector<Order*>& WareHouse::GetPendingOrders() const {
+const vector<Order*>& WareHouse::getPendingOrders() const {
     return pendingOrders;
 }
 
 /**
  * @return inProcessOrders vector
  */
-const vector<Order*>& WareHouse::GetInProcessOrders() const {
+const vector<Order*>& WareHouse::getInProcessOrders() const {
     return inProcessOrders;
 }
 
 /**
  * @return completedOrders vector
  */
-const vector<Order*>& WareHouse::GetCompletedOrders() const {
+const vector<Order*>& WareHouse::getCompletedOrders() const {
     return completedOrders;
+}
+
+/**
+ * Performs a single step only tto call from SimulateStep::act();
+ */
+void WareHouse::step() {
+    vector<Volunteer*> freeCollectors;
+    vector<Volunteer*> freeDrivers;
+
+    for (Volunteer* volunteer : volunteers) {
+        // Automatically determines whether it's a collector or driver and adds itself only if it's available.
+        volunteer->visit(freeCollectors, freeDrivers);
+    }
+
+    unsigned long size = pendingOrders.size();
+    for(int i = 0; i < size; i++) {
+        Order *order = pendingOrders[i];
+        OrderStatus orderStatus = order->getStatus();
+        if(orderStatus == OrderStatus::PENDING) {
+            if (!freeCollectors.empty()) {
+                Volunteer *volunteer = freeCollectors.back();
+                freeCollectors.pop_back();
+
+                order->setCollectorId(volunteer->getId());
+                volunteer->acceptOrder(*order);
+                order->setStatus(OrderStatus::COLLECTING);
+                inProcessOrders.push_back(order);
+                pendingOrders.erase(pendingOrders.begin() + i);
+            }
+        }
+        else if(orderStatus == OrderStatus::COLLECTING) {
+            if (!freeDrivers.empty()) {
+                unsigned long driversSize = freeDrivers.size();
+                for(int j = 0; j < driversSize && !freeDrivers[j]->canTakeOrder(*order); j++) {
+                    order->setCollectorId(freeDrivers[i]->getId());
+                    freeDrivers[i]->acceptOrder(*order);
+                    order->setStatus(OrderStatus::DELIVERING);
+                    inProcessOrders.push_back(order);
+                    pendingOrders.erase(pendingOrders.begin() + i);
+                    freeDrivers.erase(freeDrivers.begin() + j);
+                }
+            }
+        } else { // That's redundant, but it's here just in case.
+            order->setStatus(OrderStatus::COMPLETED);
+            pendingOrders.erase(pendingOrders.begin() + i);
+            completedOrders.push_back(order);
+        }
+    }
+
+    size = volunteers.size();
+    for(int i = 0; i < size; i++) {
+        Volunteer *volunteer = volunteers[i];
+        int activeId = volunteer->getActiveOrderId();
+        if(activeId != NO_ORDER) {
+            volunteer->step();
+            if(volunteer->getActiveOrderId() == NO_ORDER) {
+                advanceOrder(volunteer->getCompletedOrderId());
+                if(!volunteer->hasOrdersLeft()) {
+                    delete volunteer;
+                    volunteers[i] = nullptr; // just in case, it's redundant.
+                    volunteers.erase(volunteers.begin() + i);
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Advances the order in the hierarchy with the given id.
+ * @param orderId the id of the order to advance.
+ */
+void WareHouse::advanceOrder(int orderId) {
+    unsigned long size = inProcessOrders.size();
+    for(int i = 0; i < size; i++) {
+        Order *order = inProcessOrders[i];
+        if(order->getId() == orderId) {
+            OrderStatus orderStatus = order->getStatus();
+            if(orderStatus == OrderStatus::COLLECTING) {
+                pendingOrders.push_back(order);
+            } else if(orderStatus == OrderStatus::DELIVERING) {
+                order->setStatus(OrderStatus::COMPLETED);
+                completedOrders.push_back(order);
+            }
+            inProcessOrders.erase(inProcessOrders.begin() + i);
+            return;
+        }
+    }
 }
