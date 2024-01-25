@@ -513,6 +513,9 @@ AddVolunteer::AddVolunteer(string name, int maxDistance, int distance_per_step, 
 void AddVolunteer::act(WareHouse &wareHouse) {
     Volunteer* volunteer;
     int id = wareHouse.getVolunteerCount();
+    // If given an incorrect maxOrders
+    if (!(maxOrders==-1||maxOrders>0))
+        return;
     switch(type){
         case VolunteerType::Collector: {
             if (maxOrders == -1)
