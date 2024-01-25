@@ -9,7 +9,7 @@
  * Initializes the warehouse according to the config file. all ids start at 0.
  * @param configFilePath
  */
-WareHouse::WareHouse(const string &configFilePath)  : isOpen(true), customerCounter(0),
+WareHouse::WareHouse(const string &configFilePath)  : isOpen(false), customerCounter(0),
 volunteerCounter(0), orderCounter(0) {
     std::ifstream configFile(configFilePath);
     std::string line;
@@ -29,6 +29,7 @@ volunteerCounter(0), orderCounter(0) {
             std::cout << "Error processing line in config file: " << line << std::endl;
         }
     }
+    open();
     configFile.close();
 }
 
