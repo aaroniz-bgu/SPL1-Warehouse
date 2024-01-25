@@ -26,6 +26,5 @@ public:
     BaseAction* createAction(const std::string& input); //TODO complete
 
 private:
-    std::vector<std::string> splitIntoWords(const std::string& str);
 };
 
