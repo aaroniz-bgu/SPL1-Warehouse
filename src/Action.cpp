@@ -110,7 +110,7 @@ void AddOrder::act(WareHouse &wareHouse) {
             std::cout << getErrorMsg() << std::endl;
         }
         int customerDistance = wareHouse.getCustomer(customerId).getCustomerDistance();
-        int orderID = wareHouse.getOrderCount()+1; //TODO make sure order counter is updated
+        int orderID = wareHouse.getOrderCount();
         Order* order = new Order(orderID ,customerId, customerDistance);
         wareHouse.addOrder(order);
         complete();
