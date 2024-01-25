@@ -56,7 +56,7 @@ void WareHouse::start() { //TODO Listener loop here
         }
         catch (exception &ex)
         {
-            std::cout << "unknown error" << std::endl;
+            std::cout << ex.what() << std::endl;
         }
     }
     // Cleanup here if needed, I think the Close() action should handle this, not sure though.
