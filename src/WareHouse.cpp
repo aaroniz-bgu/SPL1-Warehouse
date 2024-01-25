@@ -499,6 +499,7 @@ void WareHouse::step() {
                 inProcessOrders.push_back(order);
 
                 pendingOrders.erase(find(pendingOrders.begin(), pendingOrders.end(), order));
+                i--; // since we're updating the vector mid-running.
             }
         }
         else if(orderStatus == OrderStatus::COLLECTING) {
@@ -512,11 +513,13 @@ void WareHouse::step() {
                     freeDrivers.erase(freeDrivers.begin() + j);
 
                     pendingOrders.erase(find(pendingOrders.begin(), pendingOrders.end(), order));
+                    i--;
                 }
             }
         } else { // That's redundant, but it's here just in case.
             order->setStatus(OrderStatus::COMPLETED);
             pendingOrders.erase(find(pendingOrders.begin(), pendingOrders.end(), order));
+            i--;
             completedOrders.push_back(order);
         }
     }
