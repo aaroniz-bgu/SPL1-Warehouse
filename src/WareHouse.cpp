@@ -33,6 +33,15 @@ volunteerCounter(0), orderCounter(0) {
     configFile.close();
 }
 
+// ONLY IN DEBUG ENVIRONMENT - DO NOT USE ANYWHERE ELSE
+void removeCarriageReturn(std::string &str) {
+    std::size_t lastPos = str.length() - 1;
+
+    if (lastPos != std::string::npos && str[lastPos] == '\r') {
+        str.erase(lastPos);
+    }
+}
+
 /**
  * Starts the warehouse.
  * @note This function is blocking.
@@ -42,6 +51,7 @@ void WareHouse::start() { //TODO Listener loop here
     while(isOpen) {
         string input;
         getline(cin, input);  // Read user input
+        removeCarriageReturn(input);
         try {
             BaseAction *action = actionFactory.createAction(input);
             if (action) {
