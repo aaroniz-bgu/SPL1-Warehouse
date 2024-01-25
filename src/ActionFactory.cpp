@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <iostream>
 #include "ActionFactory.h"
 #include "Action.h"
 
@@ -46,8 +47,12 @@ vector<string> splitIntoWords(const string& str) {
  * log,
  * close,
  * backup,
- * restore
- * @return - A new action according to the action_name, to use the action you have to use the act method.
+ * restore,
+ * volunteer (volunteer_name) (volunteer_role)(options: collector/limited_collector/driver/limited_driver)
+ * (volunteer_coolDown)/(volunteer_maxDistance)
+ * (distance_per_step)(for drivers only) (volunteer_maxOrders)(optional)
+ * @return - A new action according to the action_name, to use the action you have to use the act method. Or a nullptr
+ * if the actionType is unknown.
  */
 BaseAction *ActionFactory::createAction(const string &input) {
     vector<string> commands = splitIntoWords(input);
@@ -120,7 +125,8 @@ BaseAction *ActionFactory::createAction(const string &input) {
             }
         }
         else {
-            // Unknown action type
+            std::cout << type << " is an unknown command" << std::endl;
+            return nullptr;
         }
     } else {
         // Received empty command
