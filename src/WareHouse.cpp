@@ -1,9 +1,9 @@
-#include "../include/WareHouse.h"
-#include "../include/Action.h"
+#include "WareHouse.h"
+#include "Action.h"
 
 #include <iostream>
 #include <fstream>
-#include "../include/Volunteer.h"
+#include "Volunteer.h"
 
 /**
  * Initializes the warehouse according to the config file. all ids start at 0.
@@ -349,6 +349,7 @@ WareHouse& WareHouse::operator=(const WareHouse &other) {
     for(const BaseAction * a : other.actionsLog) {
         actionsLog.push_back(a->clone());
     }
+    return *this;
 }
 
 WareHouse& WareHouse::operator=(WareHouse &&other) noexcept {
@@ -540,7 +541,7 @@ void WareHouse::step() {
  */
 void WareHouse::advanceOrder(int orderId) {
     unsigned long size = inProcessOrders.size();
-    for(int i = 0; i < size; i++) {
+    for(unsigned long i = 0; i < size; i++) {
         Order *order = inProcessOrders[i];
         if(order->getId() == orderId) {
             OrderStatus orderStatus = order->getStatus();

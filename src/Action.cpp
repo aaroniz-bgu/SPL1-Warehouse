@@ -1,7 +1,7 @@
 #include <iostream>
-#include "../include/Action.h"
-#include "../include/Order.h"
-#include "../include/Volunteer.h"
+#include "Action.h"
+#include "Order.h"
+#include "Volunteer.h"
 
 // TODO make sure the rule of 5 is actually implemented.
 // Constructors, destructors, and method implementations for BaseAction
