@@ -104,14 +104,15 @@ AddOrder::AddOrder(int id) : BaseAction(), customerId(id) { }
  */
 void AddOrder::act(WareHouse &wareHouse) {
     try {
-        const Customer& customer = wareHouse.getCustomer(customerId);
+        Customer &customer = wareHouse.getCustomer(customerId);
         if (!customer.canMakeOrder()) {
             error("Cannot place this order");
             std::cout << getErrorMsg() << std::endl;
         }
-        int customerDistance = wareHouse.getCustomer(customerId).getCustomerDistance();
+        int customerDistance = customer.getCustomerDistance();
         int orderID = wareHouse.getOrderCount();
         Order* order = new Order(orderID ,customerId, customerDistance);
+        customer.addOrder(orderID);
         wareHouse.addOrder(order);
         complete();
     }
