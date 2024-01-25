@@ -491,7 +491,7 @@ void WareHouse::step() {
         int activeId = volunteer->getActiveOrderId();
         if(activeId != NO_ORDER) {
             volunteer->step();
-            if(volunteer->getActiveOrderId() != NO_ORDER) {
+            if(volunteer->getActiveOrderId() == NO_ORDER) {
                 advanceOrder(volunteer->getCompletedOrderId());
                 if(!volunteer->hasOrdersLeft()) {
                     delete volunteer;
