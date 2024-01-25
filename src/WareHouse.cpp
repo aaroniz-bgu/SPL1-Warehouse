@@ -505,13 +505,16 @@ void WareHouse::step() {
         }
         else if(orderStatus == OrderStatus::COLLECTING) {
             if (!freeDrivers.empty()) {
-                for(int j = 0; j < freeDrivers.size() && freeDrivers[j]->canTakeOrder(*order); j++) {
-                    order->setDriverId(freeDrivers[j]->getId());
-                    freeDrivers[i]->acceptOrder(*order);
+                Volunteer *driver = nullptr;
+                for(int j = 0; j < freeDrivers.size() && !freeDrivers[j]->canTakeOrder(*order); j++) {
+                    driver = freeDrivers[j];
+                }
+                if(driver != nullptr) {
+                    order->setDriverId(driver->getId());
+                    driver->acceptOrder(*order);
                     order->setStatus(OrderStatus::DELIVERING);
                     inProcessOrders.push_back(order);
-                    freeDrivers.erase(find(freeDrivers.begin(), freeDrivers.end(), freeDrivers[i]));
-                    j--; // since we're updating the vector mid-running.
+                    freeDrivers.erase(find(freeDrivers.begin(), freeDrivers.end(), driver));
 
                     pendingOrders.erase(find(pendingOrders.begin(), pendingOrders.end(), order));
                     i--; // since we're updating the vector mid-running.
