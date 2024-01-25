@@ -1,7 +1,7 @@
 #include <stdexcept>
 #include <iostream>
-#include "ActionFactory.h"
-#include "Action.h"
+#include "../include/ActionFactory.h"
+#include "../include/Action.h"
 
 
 /**
@@ -12,13 +12,18 @@ ActionFactory::ActionFactory() = default;
 //TODO make sure this function works.
 /**
  * @param str - the command to be parsed
- * @return - vector containing each of the words seperated by a whitespace
+ * @return - vector containing each of the words seperated by a whitespace,
+ * if it see's a # it will ignore the rest of the line.
  */
 vector<string> splitIntoWords(const string& str) {
     vector<string> words;
     string currentWord;
     for (char ch : str) {
-        if (ch == ' ') { // Check for whitespace
+        if (ch == '#') {
+            // If '#' is encountered, stop processing the rest of the line
+            break;
+        } else if (ch == ' ') {
+            // Check for whitespace
             if (!currentWord.empty()) {
                 words.push_back(currentWord);
                 currentWord.clear();
@@ -131,5 +136,6 @@ BaseAction *ActionFactory::createAction(const string &input) {
     } else {
         // Received empty command
     }
+    return nullptr;
 }
 
