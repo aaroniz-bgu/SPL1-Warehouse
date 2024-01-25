@@ -62,7 +62,7 @@ CollectorVolunteer *CollectorVolunteer::clone() const  {
 }
 
 void CollectorVolunteer::step()  {
-    if(activeOrderId != -1) {
+    if(activeOrderId != NO_ORDER) {
         if(timeLeft != 0 && decreaseCoolDown()) {
             completedOrderId = activeOrderId;
             activeOrderId = NO_ORDER;
