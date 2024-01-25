@@ -506,7 +506,7 @@ void WareHouse::step() {
         else if(orderStatus == OrderStatus::COLLECTING) {
             if (!freeDrivers.empty()) {
                 for(int j = 0; j < freeDrivers.size() && freeDrivers[j]->canTakeOrder(*order); j++) {
-                    order->setCollectorId(freeDrivers[j]->getId());
+                    order->setDriverId(freeDrivers[j]->getId());
                     freeDrivers[i]->acceptOrder(*order);
                     order->setStatus(OrderStatus::DELIVERING);
                     inProcessOrders.push_back(order);
