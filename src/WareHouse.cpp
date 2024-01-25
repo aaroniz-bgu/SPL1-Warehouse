@@ -353,6 +353,7 @@ WareHouse& WareHouse::operator=(const WareHouse &other) {
     for(const BaseAction * a : other.actionsLog) {
         actionsLog.push_back(a->clone());
     }
+    return *this;
 }
 
 WareHouse& WareHouse::operator=(WareHouse &&other) noexcept {
