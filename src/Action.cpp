@@ -486,7 +486,7 @@ string RestoreWareHouse::toString() const {
  * @param maxOrders - default -1, if it's limited add here.
  */
 AddVolunteer::AddVolunteer(string name, int coolDown, int maxOrders) :
-    BaseAction(), name(name), cooldown(cooldown), maxOrders(maxOrders),
+    BaseAction(), name(name), cooldown(coolDown), maxOrders(maxOrders),
     distance_per_step(-1), maxDistance(-1), type(VolunteerType::Collector) { }
 
 
