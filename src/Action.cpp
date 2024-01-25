@@ -1,12 +1,13 @@
 #include <iostream>
-#include "Action.h"
-#include "Order.h"
-#include "Volunteer.h"
+#include "../include/Action.h"
+#include "../include/Order.h"
+#include "../include/Volunteer.h"
 
 // TODO make sure the rule of 5 is actually implemented.
 // Constructors, destructors, and method implementations for BaseAction
 /**
  * Status is initialized as error until act is done.
+ * If an error occurs it will print the error.
  */
 BaseAction::BaseAction() : status(ActionStatus::ERROR){
     errorMsg = "Not yet acted";
@@ -104,8 +105,10 @@ AddOrder::AddOrder(int id) : BaseAction(), customerId(id) { }
 void AddOrder::act(WareHouse &wareHouse) {
     try {
         const Customer& customer = wareHouse.getCustomer(customerId);
-        if (!customer.canMakeOrder())
+        if (!customer.canMakeOrder()) {
             error("Cannot place this order");
+            std::cout << getErrorMsg() << std::endl;
+        }
         int customerDistance = wareHouse.getCustomer(customerId).getCustomerDistance();
         int orderID = wareHouse.getOrderCount()+1; //TODO make sure order counter is updated
         Order* order = new Order(orderID ,customerId, customerDistance);
@@ -115,6 +118,7 @@ void AddOrder::act(WareHouse &wareHouse) {
     // Customer doesn't exist
     catch (const std::exception&) {
         error("Cannot place this order");
+        std::cout << getErrorMsg() << std::endl;
     }
 }
 
@@ -184,6 +188,7 @@ void PrintOrderStatus::act(WareHouse &wareHouse) {
     }
     catch (const std::exception& ex) {
         error("Order doesn’t exist");
+        std::cout << getErrorMsg() << std::endl;
     }
 }
 
@@ -238,16 +243,16 @@ void PrintCustomerStatus::act(WareHouse &wareHouse) {
                 }
                 std::cout << std::endl;
             } catch (const std::exception& ex) {
+                // Should not happen, serious error if it does.
                 std::cout << "Error retrieving order details for OrderID: " << orderId << std::endl;
             }
         }
-
         // Print the number of orders the customer can still place
         std::cout << "numOrdersLeft: " << (customer.getMaxOrders() - customer.getNumOrders()) << std::endl;
-
         complete();
     } catch (const std::exception& ex) {
         error("Customer doesn’t exist");
+        std::cout << getErrorMsg() << std::endl;
     }
 }
 
@@ -284,6 +289,7 @@ void PrintVolunteerStatus::act(WareHouse &wareHouse) {
     }
     catch (const std::exception& ex) {
         error("Volunteer doesn’t exist");
+        std::cout << getErrorMsg() << std::endl;
     }
 }
 
@@ -445,6 +451,7 @@ void RestoreWareHouse::act(WareHouse &wareHouse) {
     // Check if backup exists
     if (backup == nullptr) {
         error("No backup available");
+        std::cout << getErrorMsg() << std::endl;
     }
     else {
         // Overwrite the current warehouse state with the backup with the = operator, should erase current warehouse data.
@@ -463,3 +470,94 @@ RestoreWareHouse *RestoreWareHouse::clone() const {
 string RestoreWareHouse::toString() const {
     return "restore "+getStatusString();
 }
+
+/*  Implementations for AddVolunteer - this class is purely for the initialization with the config file.
+ *  These actions should not be added to the actionlog ever.
+*/
+
+/**
+ * Creates a AddVolunteer action for adding a volunteer that's a collector,
+ * if it's not a limited driver, set the maxOrders field to -1
+ *
+ * THIS ACTION SHOULD NOT BE ADDED TO THE ACTIONLOG.
+ * @param name
+ * @param coolDown
+ * @param maxOrders - default -1, if it's limited add here.
+ */
+AddVolunteer::AddVolunteer(string name, int coolDown, int maxOrders) :
+    BaseAction(), name(name), cooldown(cooldown), maxOrders(maxOrders),
+    distance_per_step(-1), maxDistance(-1), type(VolunteerType::Collector) { }
+
+
+/**
+ * Creates a AddVolunteer action for adding a volunteer that's a driver,
+ * if it's not a limited driver, set the maxOrders field to -1
+ *
+ * THIS ACTION SHOULD NOT BE ADDED TO THE ACTIONLOG.
+ * @param name
+ * @param maxDistance
+ * @param distance_per_step
+ * @param maxOrders - default -1, if it's limited add here.
+ */
+AddVolunteer::AddVolunteer(string name, int maxDistance, int distance_per_step, int maxOrders) :
+    BaseAction(), name(name), maxDistance(maxDistance), distance_per_step(distance_per_step),
+    maxOrders(maxOrders), cooldown(-1), type(VolunteerType::Driver) { }
+
+
+/**
+ * Adds the volunteer to the warehouse according to the parameters,
+ * limited if maxOrders!=-1 and according to the VolunteerType (Collector or Driver).
+ * @param wareHouse
+ */
+void AddVolunteer::act(WareHouse &wareHouse) {
+    Volunteer* volunteer;
+    int id = wareHouse.getVolunteerCount();
+    // If given an incorrect maxOrders
+    if (!(maxOrders==-1||maxOrders>0))
+        return;
+    switch(type){
+        case VolunteerType::Collector: {
+            if (maxOrders == -1)
+                volunteer = new CollectorVolunteer(id, name, cooldown);
+            else
+                volunteer = new LimitedCollectorVolunteer(id, name, cooldown, maxOrders);
+            break;
+        }
+        case VolunteerType::Driver: {
+            if (maxOrders == -1)
+                volunteer = new DriverVolunteer(id, name, maxDistance, distance_per_step);
+            else
+                volunteer = new LimitedDriverVolunteer(id, name, maxDistance, distance_per_step, maxOrders);
+            break;
+        }
+    }
+    wareHouse.addVolunteer(volunteer);
+    complete();
+}
+
+AddVolunteer *AddVolunteer::clone() const {
+    return new AddVolunteer(*this);
+}
+
+/**
+ * @return "volunteer (volunteer_role) (volunteer_coolDown)/(volunteer_maxDistance) (distance_per_step)(for drivers only) (volunteer_maxOrders)(if limited)"
+ */
+string AddVolunteer::toString() const {
+    string str = "volunteer ";
+
+    if (type == VolunteerType::Collector) {
+        str += "collector "+to_string(cooldown);
+    }
+    else if (type == VolunteerType::Driver) {
+        str += "driver "+ to_string(maxDistance)+" "+to_string(distance_per_step);
+    }
+    else {
+        return "error getting volunteer string";
+    }
+    if (maxOrders!=-1)
+        str += " "+to_string(maxOrders);
+    return str;
+}
+
+
+

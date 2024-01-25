@@ -16,6 +16,8 @@ class BaseAction;
 #define CLOSE "close"
 #define BACKUP "backup"
 #define RESTORE "restore"
+#define VOLUNTEER "volunteer"
+#define NOT_LIMITED (-1)
 
 class ActionFactory {
 public:
@@ -24,6 +26,5 @@ public:
     BaseAction* createAction(const std::string& input); //TODO complete
 
 private:
-    std::vector<std::string> splitIntoWords(const std::string& str);
 };
 

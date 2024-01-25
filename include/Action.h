@@ -13,6 +13,10 @@ enum class CustomerType{
     Soldier, Civilian
 };
 
+enum class VolunteerType{
+    Collector, Driver
+};
+
 
 class Customer;
 extern WareHouse* backup;
@@ -154,4 +158,23 @@ class RestoreWareHouse : public BaseAction {
         string toString() const override;
         ~RestoreWareHouse() override = default;
     private:
+};
+
+
+class AddVolunteer : public BaseAction {
+    public:
+        AddVolunteer(string name, int coolDown, int maxOrders);
+        AddVolunteer(string name, int maxDistance, int distance_per_step , int maxOrders);
+        void act(WareHouse &wareHouse) override;
+        AddVolunteer *clone() const override;
+        string toString() const override;
+        ~AddVolunteer() override = default;
+    private:
+    const string name;
+    const int cooldown;
+    const int maxDistance;
+    const int distance_per_step;
+    const int maxOrders;
+    const VolunteerType type;
+
 };

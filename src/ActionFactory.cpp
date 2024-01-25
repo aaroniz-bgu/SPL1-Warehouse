@@ -1,6 +1,7 @@
 #include <stdexcept>
-#include "ActionFactory.h"
-#include "Action.h"
+#include <iostream>
+#include "../include/ActionFactory.h"
+#include "../include/Action.h"
 
 
 /**
@@ -11,13 +12,18 @@ ActionFactory::ActionFactory() = default;
 //TODO make sure this function works.
 /**
  * @param str - the command to be parsed
- * @return - vector containing each of the words seperated by a whitespace
+ * @return - vector containing each of the words seperated by a whitespace,
+ * if it see's a # it will ignore the rest of the line.
  */
 vector<string> splitIntoWords(const string& str) {
     vector<string> words;
     string currentWord;
     for (char ch : str) {
-        if (ch == ' ') { // Check for whitespace
+        if (ch == '#') {
+            // If '#' is encountered, stop processing the rest of the line
+            break;
+        } else if (ch == ' ') {
+            // Check for whitespace
             if (!currentWord.empty()) {
                 words.push_back(currentWord);
                 currentWord.clear();
@@ -46,8 +52,12 @@ vector<string> splitIntoWords(const string& str) {
  * log,
  * close,
  * backup,
- * restore
- * @return - A new action according to the action_name, to use the action you have to use the act method.
+ * restore,
+ * volunteer (volunteer_name) (volunteer_role)(options: collector/limited_collector/driver/limited_driver)
+ * (volunteer_coolDown)/(volunteer_maxDistance)
+ * (distance_per_step)(for drivers only) (volunteer_maxOrders)(optional)
+ * @return - A new action according to the action_name, to use the action you have to use the act method. Or a nullptr
+ * if the actionType is unknown.
  */
 BaseAction *ActionFactory::createAction(const string &input) {
     vector<string> commands = splitIntoWords(input);
@@ -92,11 +102,40 @@ BaseAction *ActionFactory::createAction(const string &input) {
         else if (type == RESTORE) {
             return new RestoreWareHouse();
         }
+        else if (type == VOLUNTEER) {
+            string volunteerName = commands[1];
+            string volunteerRole = commands[2];
+            if (volunteerRole == "collector") {
+                int cooldown = std::stoi(commands[3]);
+                return new AddVolunteer(volunteerName, cooldown, NOT_LIMITED);
+            }
+            else if (volunteerRole == "limited_collector") {
+                int cooldown = std::stoi(commands[3]);
+                int maxOrders = std::stoi(commands[4]);
+                return new AddVolunteer(volunteerName, cooldown, maxOrders);
+            }
+            else if (volunteerRole == "driver") {
+                int maxDistance = std::stoi(commands[3]);
+                int distancePerStep = std::stoi(commands[4]);
+                return new AddVolunteer(volunteerName, maxDistance, distancePerStep, NOT_LIMITED);
+            }
+            else if (volunteerRole == "limited_driver") {
+                int maxDistance = std::stoi(commands[3]);
+                int distancePerStep = std::stoi(commands[4]);
+                int maxOrders = std::stoi(commands[5]);
+                return new AddVolunteer(volunteerName, maxDistance, distancePerStep, maxOrders);
+            }
+            else {
+                // Unknown volunteer role
+            }
+        }
         else {
-            // Unknown action type
+            std::cout << type << " is an unknown command" << std::endl;
+            return nullptr;
         }
     } else {
         // Received empty command
     }
+    return nullptr;
 }
 
