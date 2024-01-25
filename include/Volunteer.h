@@ -25,6 +25,13 @@ class Volunteer {
         virtual Volunteer* clone() const = 0; //Return a copy of the volunteer
 
         virtual ~Volunteer() = default;
+        /**
+         * Used in SimulateStep::step.
+         * A visitor design pattern to improve runtime-dynamic dispatch of free volunteers
+         * @param freeCollectors free volunteers of type CollectorVolunteer
+         * @param freeDrivers free volunteers of type DriverVolunteer
+         */
+        virtual void visit(vector<Volunteer*> &freeCollectors, vector<Volunteer*> &freeDrivers) = 0;
 
     protected:
         int completedOrderId; //Initialized to NO_ORDER if no order has been completed yet
@@ -52,6 +59,7 @@ class CollectorVolunteer: public Volunteer {
         string toString() const override;
 
         ~CollectorVolunteer() override = default;
+        void visit(vector<Volunteer*> &freeCollectors, vector<Volunteer*> &freeDrivers) override;
 
     private:
         const int coolDown; // The time it takes the volunteer to process an order
@@ -95,6 +103,7 @@ class DriverVolunteer: public Volunteer {
         string toString() const override;
 
         ~DriverVolunteer() override = default;
+        void visit(vector<Volunteer*> &freeCollectors, vector<Volunteer*> &freeDrivers) override;
 
     private:
         const int maxDistance; // The maximum distance of ANY order the volunteer can take
