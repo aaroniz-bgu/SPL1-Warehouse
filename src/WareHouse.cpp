@@ -33,7 +33,6 @@ volunteerCounter(0), orderCounter(0) {
     configFile.close();
 }
 
-
 /**
  * Starts the warehouse.
  * @note This function is blocking.
