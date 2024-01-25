@@ -1,5 +1,5 @@
-#include "WareHouse.h"
-#include "Action.h"
+#include "../include/WareHouse.h"
+#include "../include/Action.h"
 
 #include <iostream>
 #include <fstream>
@@ -9,7 +9,7 @@
  * Initializes the warehouse according to the config file. all ids start at 0.
  * @param configFilePath
  */
-WareHouse::WareHouse(const string &configFilePath)  : isOpen(false), customerCounter(0),
+WareHouse::WareHouse(const string &configFilePath)  : isOpen(true), customerCounter(0),
 volunteerCounter(0), orderCounter(0) {
     std::ifstream configFile(configFilePath);
     std::string line;
