@@ -504,7 +504,7 @@ void WareHouse::step() {
         else if(orderStatus == OrderStatus::COLLECTING) {
             if (!freeDrivers.empty()) {
                 unsigned long driversSize = freeDrivers.size();
-                for(int j = 0; j < driversSize && !freeDrivers[j]->canTakeOrder(*order); j++) {
+                for(int j = 0; j < driversSize && freeDrivers[j]->canTakeOrder(*order); j++) {
                     order->setCollectorId(freeDrivers[i]->getId());
                     freeDrivers[i]->acceptOrder(*order);
                     order->setStatus(OrderStatus::DELIVERING);
