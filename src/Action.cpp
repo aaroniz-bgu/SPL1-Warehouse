@@ -7,6 +7,7 @@
 // Constructors, destructors, and method implementations for BaseAction
 /**
  * Status is initialized as error until act is done.
+ * If an error occurs it will print the error.
  */
 BaseAction::BaseAction() : status(ActionStatus::ERROR){
     errorMsg = "Not yet acted";
@@ -105,8 +106,10 @@ AddOrder::AddOrder(int id) : BaseAction(), customerId(id) { }
 void AddOrder::act(WareHouse &wareHouse) {
     try {
         const Customer& customer = wareHouse.getCustomer(customerId);
-        if (!customer.canMakeOrder())
+        if (!customer.canMakeOrder()) {
             error("Cannot place this order");
+            std::cout << getErrorMsg() << std::endl;
+        }
         int customerDistance = wareHouse.getCustomer(customerId).getCustomerDistance();
         int orderID = wareHouse.getOrderCount()+1; //TODO make sure order counter is updated
         Order* order = new Order(orderID ,customerId, customerDistance);
@@ -116,6 +119,7 @@ void AddOrder::act(WareHouse &wareHouse) {
     // Customer doesn't exist
     catch (const std::exception&) {
         error("Cannot place this order");
+        std::cout << getErrorMsg() << std::endl;
     }
 }
 
@@ -185,6 +189,7 @@ void PrintOrderStatus::act(WareHouse &wareHouse) {
     }
     catch (const std::exception& ex) {
         error("Order doesn’t exist");
+        std::cout << getErrorMsg() << std::endl;
     }
 }
 
@@ -239,16 +244,16 @@ void PrintCustomerStatus::act(WareHouse &wareHouse) {
                 }
                 std::cout << std::endl;
             } catch (const std::exception& ex) {
+                // Should not happen, serious error if it does.
                 std::cout << "Error retrieving order details for OrderID: " << orderId << std::endl;
             }
         }
-
         // Print the number of orders the customer can still place
         std::cout << "numOrdersLeft: " << (customer.getMaxOrders() - customer.getNumOrders()) << std::endl;
-
         complete();
     } catch (const std::exception& ex) {
         error("Customer doesn’t exist");
+        std::cout << getErrorMsg() << std::endl;
     }
 }
 
@@ -285,6 +290,7 @@ void PrintVolunteerStatus::act(WareHouse &wareHouse) {
     }
     catch (const std::exception& ex) {
         error("Volunteer doesn’t exist");
+        std::cout << getErrorMsg() << std::endl;
     }
 }
 
@@ -446,6 +452,7 @@ void RestoreWareHouse::act(WareHouse &wareHouse) {
     // Check if backup exists
     if (backup == nullptr) {
         error("No backup available");
+        std::cout << getErrorMsg() << std::endl;
     }
     else {
         // Overwrite the current warehouse state with the backup with the = operator, should erase current warehouse data.
