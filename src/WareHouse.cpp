@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 #include "Volunteer.h"
 
 /**
@@ -496,7 +497,8 @@ void WareHouse::step() {
                 volunteer->acceptOrder(*order);
                 order->setStatus(OrderStatus::COLLECTING);
                 inProcessOrders.push_back(order);
-                pendingOrders.erase(pendingOrders.begin() + i);
+
+                pendingOrders.erase(find(pendingOrders.begin(), pendingOrders.end(), order));
             }
         }
         else if(orderStatus == OrderStatus::COLLECTING) {
@@ -507,13 +509,14 @@ void WareHouse::step() {
                     freeDrivers[i]->acceptOrder(*order);
                     order->setStatus(OrderStatus::DELIVERING);
                     inProcessOrders.push_back(order);
-                    pendingOrders.erase(pendingOrders.begin() + i);
                     freeDrivers.erase(freeDrivers.begin() + j);
+
+                    pendingOrders.erase(find(pendingOrders.begin(), pendingOrders.end(), order));
                 }
             }
         } else { // That's redundant, but it's here just in case.
             order->setStatus(OrderStatus::COMPLETED);
-            pendingOrders.erase(pendingOrders.begin() + i);
+            pendingOrders.erase(find(pendingOrders.begin(), pendingOrders.end(), order));
             completedOrders.push_back(order);
         }
     }
@@ -529,11 +532,11 @@ void WareHouse::step() {
                 if(!volunteer->hasOrdersLeft()) {
                     delete volunteer;
                     volunteers[i] = nullptr; // just in case, it's redundant.
-                    volunteers.erase(volunteers.begin() + i);
                 }
             }
         }
     }
+    volunteers.erase(remove(volunteers.begin(), volunteers.end(), nullptr), volunteers.end());
 }
 
 /**
@@ -552,7 +555,7 @@ void WareHouse::advanceOrder(int orderId) {
                 order->setStatus(OrderStatus::COMPLETED);
                 completedOrders.push_back(order);
             }
-            inProcessOrders.erase(inProcessOrders.begin() + i);
+            inProcessOrders.erase(find(inProcessOrders.begin(), inProcessOrders.end(), order));
             return;
         }
     }
