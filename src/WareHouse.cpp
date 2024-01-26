@@ -11,17 +11,17 @@
  * @param configFilePath
  */
 WareHouse::WareHouse(const string &configFilePath)  :
-isOpen(false),
-customerCounter(0),
-volunteerCounter(0),
-orderCounter(0),
-volunteers(),
-pendingOrders(),
-inProcessOrders(),
-completedOrders(),
-customers(),
-actionFactory(),
-actionsLog()
+    isOpen(false),
+    actionsLog(),
+    volunteers(),
+    pendingOrders(),
+    inProcessOrders(),
+    completedOrders(),
+    customers(),
+    customerCounter(0),
+    volunteerCounter(0),
+    actionFactory(),
+    orderCounter(0)
 {
     std::ifstream configFile(configFilePath);
     std::string line;
@@ -253,17 +253,17 @@ WareHouse::~WareHouse() {
  * @param other - the WareHouse to copy.
  */
 WareHouse::WareHouse(const WareHouse &other) :
-isOpen(other.isOpen),
-customerCounter(other.customerCounter),
-volunteerCounter(other.volunteerCounter),
-orderCounter(other.orderCounter),
-volunteers(),
-pendingOrders(),
-inProcessOrders(),
-completedOrders(),
-customers(),
-actionFactory(),
-actionsLog()
+    isOpen(other.isOpen),
+    actionsLog(),
+    volunteers(),
+    pendingOrders(),
+    inProcessOrders(),
+    completedOrders(),
+    customers(),
+    customerCounter(other.customerCounter),
+    volunteerCounter(other.volunteerCounter),
+    actionFactory(),
+    orderCounter(other.orderCounter)
 {
     unsigned long size = other.volunteers.size(); // Minimizing calls to size()
     volunteers = vector<Volunteer*>(size);
@@ -301,17 +301,17 @@ actionsLog()
  * @param other - the WareHouse to move.
  */
 WareHouse::WareHouse(WareHouse &&other) noexcept :
-isOpen(other.isOpen),
-customerCounter(other.customerCounter),
-volunteerCounter(other.volunteerCounter),
-orderCounter(other.orderCounter),
-volunteers(),
-pendingOrders(),
-inProcessOrders(),
-completedOrders(),
-customers(),
-actionFactory(),
-actionsLog()
+    isOpen(other.isOpen),
+    actionsLog(),
+    volunteers(),
+    pendingOrders(),
+    inProcessOrders(),
+    completedOrders(),
+    customers(),
+    customerCounter(other.customerCounter),
+    volunteerCounter(other.volunteerCounter),
+    actionFactory(),
+    orderCounter(other.orderCounter)
 {
     int size = other.volunteers.size(); // Minimizing calls to size()
     volunteers = vector<Volunteer*>(size);
