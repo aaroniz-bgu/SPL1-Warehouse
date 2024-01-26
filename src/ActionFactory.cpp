@@ -9,7 +9,6 @@
  */
 ActionFactory::ActionFactory() = default;
 
-//TODO make sure this function works.
 /**
  * @param str - the command to be parsed
  * @return - vector containing each of the words seperated by a whitespace,
