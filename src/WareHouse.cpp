@@ -52,8 +52,7 @@ void WareHouse::start() { //TODO Listener loop here
     while(isOpen) {
         string input;
         getline(cin, input);  // Read user input
-        //FIXME - REMOVE THIS WHEN COMPILING FOR SUBMISSION
-        //removeCarriageReturn(input);
+        //removeCarriageReturn(input); ONLY IN DEBUG
         try {
             BaseAction *action = actionFactory.createAction(input);
             if (action) {
