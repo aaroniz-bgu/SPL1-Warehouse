@@ -22,7 +22,7 @@ volunteerCounter(0), orderCounter(0) {
         if (line.empty() || line[0] == '#') continue; // Skip empty lines and comments
 
         // Create and execute the action
-        BaseAction* action = actionFactory.createAction(line);
+        BaseAction* action = actionFactory.createAction(line, isOpen);
         if (action) {
             action->act(*this);
             delete action; // Clean up after executing the action
@@ -54,7 +54,7 @@ void WareHouse::start() { //TODO Listener loop here
         getline(cin, input);  // Read user input
         //removeCarriageReturn(input); ONLY IN DEBUG
         try {
-            BaseAction *action = actionFactory.createAction(input);
+            BaseAction *action = actionFactory.createAction(input, isOpen);
             if (action) {
                 action->act(*this);
                 // If the action resulted in an error it should have already printed the error.

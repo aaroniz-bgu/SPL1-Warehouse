@@ -56,10 +56,11 @@ vector<string> splitIntoWords(const string& str) {
  * volunteer (volunteer_name) (volunteer_role)(options: collector/limited_collector/driver/limited_driver)
  * (volunteer_coolDown)/(volunteer_maxDistance)
  * (distance_per_step)(for drivers only) (volunteer_maxOrders)(optional)
+ * @param isOpen - Where the warehouse is open or not. So that the function knows if it can use the volunteer command.
  * @return - A new action according to the action_name, to use the action you have to use the act method. Or a nullptr
  * if the actionType is unknown.
  */
-BaseAction *ActionFactory::createAction(const string &input) {
+BaseAction *ActionFactory::createAction(const string &input, bool isOpen) {
     vector<string> commands = splitIntoWords(input);
     if (!commands.empty()) {
         string type = commands[0]; // First word should be the action type
@@ -103,7 +104,7 @@ BaseAction *ActionFactory::createAction(const string &input) {
             else if (type == RESTORE) {
                 return new RestoreWareHouse();
             }
-            else if (type == VOLUNTEER) {
+            else if (!isOpen && type == VOLUNTEER) {
                 string volunteerName = commands[1];
                 string volunteerRole = commands[2];
                 if (volunteerRole == "collector") {
@@ -127,7 +128,7 @@ BaseAction *ActionFactory::createAction(const string &input) {
                     return new AddVolunteer(volunteerName, maxDistance, distancePerStep, maxOrders);
                 }
                 else {
-                    // Unknown volunteer role
+                    std::cout << "Unknown volunteer role: " << volunteerRole << std::endl;
                 }
             }
             else {

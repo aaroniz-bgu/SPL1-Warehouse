@@ -23,7 +23,7 @@ class ActionFactory {
 public:
     ActionFactory();  // Constructor if needed for initializing state
 
-    BaseAction* createAction(const std::string& input); //TODO complete
+    BaseAction* createAction(const std::string& input, bool isOpen);
 
 private:
 };
