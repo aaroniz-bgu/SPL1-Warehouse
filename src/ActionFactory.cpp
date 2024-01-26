@@ -64,30 +64,31 @@ BaseAction *ActionFactory::createAction(const string &input, bool isOpen) {
     if (!commands.empty()) {
         string type = commands[0]; // First word should be the action type
         try {
-            if (type == STEP) {
+            int size = commands.size();
+            if (type == STEP && size == 2) {
                 int numOfSteps = std::stoi(commands[1]);
                 return new SimulateStep(numOfSteps);
             }
-            else if (type == ORDER) {
+            else if (type == ORDER && size == 2) {
                 int orderId = std::stoi(commands[1]);
                 return new AddOrder(orderId);
             }
-            else if (type == CUSTOMER) {
+            else if (type == CUSTOMER && size == 5) {
                 string customerName = commands[1];
                 string customerType = commands[2];
                 int distance = std::stoi(commands[3]);
                 int maxOrders = std::stoi(commands[4]);
                 return new AddCustomer(customerName, customerType, distance, maxOrders);
             }
-            else if (type == ORDERSTATUS) {
+            else if (type == ORDERSTATUS && size == 2) {
                 int orderId = std::stoi(commands[1]);
                 return new PrintOrderStatus(orderId);
             }
-            else if (type == CUSTOMERSTATUS) {
+            else if (type == CUSTOMERSTATUS && size == 2) {
                 int customerId = std::stoi(commands[1]);
                 return new PrintCustomerStatus(customerId);
             }
-            else if (type == VOLUNTEERSTATUS) {
+            else if (type == VOLUNTEERSTATUS && size == 2) {
                 int volunteerId = std::stoi(commands[1]);
                 return new PrintVolunteerStatus(volunteerId);
             }
@@ -103,24 +104,24 @@ BaseAction *ActionFactory::createAction(const string &input, bool isOpen) {
             else if (type == RESTORE) {
                 return new RestoreWareHouse();
             }
-            else if (!isOpen && type == VOLUNTEER) {
+            else if (!isOpen && type == VOLUNTEER  && size > 3) {
                 string volunteerName = commands[1];
                 string volunteerRole = commands[2];
                 if (volunteerRole == "collector") {
                     int cooldown = std::stoi(commands[3]);
                     return new AddVolunteer(volunteerName, cooldown, NOT_LIMITED);
                 }
-                else if (volunteerRole == "limited_collector") {
+                else if (volunteerRole == "limited_collector" && size > 4) {
                     int cooldown = std::stoi(commands[3]);
                     int maxOrders = std::stoi(commands[4]);
                     return new AddVolunteer(volunteerName, cooldown, maxOrders);
                 }
-                else if (volunteerRole == "driver") {
+                else if (volunteerRole == "driver" && size > 4) {
                     int maxDistance = std::stoi(commands[3]);
                     int distancePerStep = std::stoi(commands[4]);
                     return new AddVolunteer(volunteerName, maxDistance, distancePerStep, NOT_LIMITED);
                 }
-                else if (volunteerRole == "limited_driver") {
+                else if (volunteerRole == "limited_driver" && size > 5) {
                     int maxDistance = std::stoi(commands[3]);
                     int distancePerStep = std::stoi(commands[4]);
                     int maxOrders = std::stoi(commands[5]);
@@ -131,7 +132,7 @@ BaseAction *ActionFactory::createAction(const string &input, bool isOpen) {
                 }
             }
             else {
-                std::cout << type << " is an unknown command" << std::endl;
+                std::cout << type << " is an unknown command or perhaps you had missing arguments." << std::endl;
                 return nullptr;
             }
         }
