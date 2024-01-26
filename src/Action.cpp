@@ -104,14 +104,15 @@ AddOrder::AddOrder(int id) : BaseAction(), customerId(id) { }
  */
 void AddOrder::act(WareHouse &wareHouse) {
     try {
-        const Customer& customer = wareHouse.getCustomer(customerId);
+        Customer &customer = wareHouse.getCustomer(customerId);
         if (!customer.canMakeOrder()) {
             error("Cannot place this order");
             std::cout << getErrorMsg() << std::endl;
         }
-        int customerDistance = wareHouse.getCustomer(customerId).getCustomerDistance();
-        int orderID = wareHouse.getOrderCount()+1; //TODO make sure order counter is updated
+        int customerDistance = customer.getCustomerDistance();
+        int orderID = wareHouse.getOrderCount();
         Order* order = new Order(orderID ,customerId, customerDistance);
+        customer.addOrder(orderID);
         wareHouse.addOrder(order);
         complete();
     }
@@ -485,7 +486,7 @@ string RestoreWareHouse::toString() const {
  * @param maxOrders - default -1, if it's limited add here.
  */
 AddVolunteer::AddVolunteer(string name, int coolDown, int maxOrders) :
-    BaseAction(), name(name), cooldown(cooldown), maxOrders(maxOrders),
+    BaseAction(), name(name), cooldown(coolDown), maxOrders(maxOrders),
     distance_per_step(-1), maxDistance(-1), type(VolunteerType::Collector) { }
 
 
