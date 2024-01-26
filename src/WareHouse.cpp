@@ -35,13 +35,13 @@ volunteerCounter(0), orderCounter(0) {
 }
 
 // ONLY IN DEBUG ENVIRONMENT - DO NOT USE ANYWHERE ELSE
-void removeCarriageReturn(std::string &str) {
-    std::size_t lastPos = str.length() - 1;
-
-    if (lastPos != std::string::npos && str[lastPos] == '\r') {
-        str.erase(lastPos);
-    }
-}
+//void removeCarriageReturn(std::string &str) {
+//    std::size_t lastPos = str.length() - 1;
+//
+//    if (lastPos != std::string::npos && str[lastPos] == '\r') {
+//        str.erase(lastPos);
+//    }
+//}
 
 /**
  * Starts the warehouse.
@@ -52,8 +52,7 @@ void WareHouse::start() { //TODO Listener loop here
     while(isOpen) {
         string input;
         getline(cin, input);  // Read user input
-        //FIXME - REMOVE THIS WHEN COMPILING FOR SUBMISSION
-        removeCarriageReturn(input);
+        //removeCarriageReturn(input); ONLY IN DEBUG
         try {
             BaseAction *action = actionFactory.createAction(input);
             if (action) {
