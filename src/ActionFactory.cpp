@@ -1,7 +1,7 @@
 #include <stdexcept>
 #include <iostream>
-#include "ActionFactory.h"
-#include "Action.h"
+#include "../include/ActionFactory.h"
+#include "../include/Action.h"
 
 
 /**

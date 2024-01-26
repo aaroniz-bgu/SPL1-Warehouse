@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
-#include "Volunteer.h"
+#include "../include/Volunteer.h"
 
 /**
  * Initializes the warehouse according to the config file. all ids start at 0.
