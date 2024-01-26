@@ -10,8 +10,19 @@
  * Initializes the warehouse according to the config file. all ids start at 0.
  * @param configFilePath
  */
-WareHouse::WareHouse(const string &configFilePath)  : isOpen(false), customerCounter(0),
-volunteerCounter(0), orderCounter(0) {
+WareHouse::WareHouse(const string &configFilePath)  :
+isOpen(false),
+customerCounter(0),
+volunteerCounter(0),
+orderCounter(0),
+volunteers(),
+pendingOrders(),
+inProcessOrders(),
+completedOrders(),
+customers(),
+actionFactory(),
+actionsLog()
+{
     std::ifstream configFile(configFilePath);
     std::string line;
     if (!configFile.is_open()) {
@@ -206,32 +217,32 @@ void WareHouse::open() {
  */
 WareHouse::~WareHouse() {
     for(Volunteer * volunteer : volunteers) {
-        if(volunteer != nullptr) {
+        if(volunteer) {
             delete volunteer; //FIXME - yet to implement destructor of volunteer
         }
     }
     for (Customer * customer : customers) {
-        if(customer != nullptr) {
+        if(customer) {
             delete customer;
         }
     }
     for (Order * order : pendingOrders) {
-        if(order != nullptr) {
+        if(order) {
             delete order;
         }
     }
     for (Order * order : inProcessOrders) {
-        if(order != nullptr) {
+        if(order) {
             delete order;
         }
     }
     for(Order * order : completedOrders) {
-        if(order != nullptr) {
+        if(order) {
             delete order;
         }
     }
     for (BaseAction * action : actionsLog) {
-        if(action != nullptr) {
+        if(action) {
             delete action; //FIXME - yet to implement destructor of BaseAction
         }
     }
@@ -241,36 +252,47 @@ WareHouse::~WareHouse() {
  * Copy constructor of WareHouse.
  * @param other - the WareHouse to copy.
  */
-WareHouse::WareHouse(const WareHouse &other) : isOpen(other.isOpen),
-customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter) {
-    int size = other.volunteers.size(); // Minimizing calls to size()
+WareHouse::WareHouse(const WareHouse &other) :
+isOpen(other.isOpen),
+customerCounter(other.customerCounter),
+volunteerCounter(other.volunteerCounter),
+orderCounter(other.orderCounter),
+volunteers(),
+pendingOrders(),
+inProcessOrders(),
+completedOrders(),
+customers(),
+actionFactory(),
+actionsLog()
+{
+    unsigned long size = other.volunteers.size(); // Minimizing calls to size()
     volunteers = vector<Volunteer*>(size);
-    for (int i = 0; i < size; i++) {
+    for (unsigned long i = 0; i < size; i++) {
         volunteers[i] = other.volunteers[i]->clone();
     }
     size = other.customers.size();
     customers = vector<Customer*>(size);
-    for (int i = 0; i < size; i++) {
+    for (unsigned long i = 0; i < size; i++) {
         customers[i] = other.customers[i]->clone();
     }
     size = other.pendingOrders.size();
     pendingOrders = vector<Order*>(size);
-    for (int i = 0; i < size; i++) {
+    for (unsigned long i = 0; i < size; i++) {
         pendingOrders[i] = new Order(*other.pendingOrders[i]);
     }
     size = other.inProcessOrders.size();
     inProcessOrders = vector<Order*>(size);
-    for (int i = 0; i < size; i++) {
+    for (unsigned long i = 0; i < size; i++) {
         inProcessOrders[i] = new Order(*other.inProcessOrders[i]);
     }
     size = other.completedOrders.size();
     completedOrders = vector<Order*>(size);
-    for (int i = 0; i < size; i++) {
+    for (unsigned long i = 0; i < size; i++) {
         completedOrders[i] = new Order(*other.completedOrders[i]);
     }
     size = other.actionsLog.size();
     actionsLog = vector<BaseAction*>(size);
-    for (int i = 0; i < size; i++) {
+    for (unsigned long i = 0; i < size; i++) {
         actionsLog[i] = other.actionsLog[i]->clone();
     }
 }
@@ -278,8 +300,19 @@ customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter)
 /*** Move constructor of WareHouse.
  * @param other - the WareHouse to move.
  */
-WareHouse::WareHouse(WareHouse &&other) noexcept : isOpen(other.isOpen),
-customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter) {
+WareHouse::WareHouse(WareHouse &&other) noexcept :
+isOpen(other.isOpen),
+customerCounter(other.customerCounter),
+volunteerCounter(other.volunteerCounter),
+orderCounter(other.orderCounter),
+volunteers(),
+pendingOrders(),
+inProcessOrders(),
+completedOrders(),
+customers(),
+actionFactory(),
+actionsLog()
+{
     int size = other.volunteers.size(); // Minimizing calls to size()
     volunteers = vector<Volunteer*>(size);
     for (int i = 0; i < size; i++) {
@@ -416,12 +449,12 @@ WareHouse& WareHouse::operator=(WareHouse &&other) noexcept {
  */
 void WareHouse::freeResources() {
     //[!] Notice - this is a delete operation in an if statement which is in a for loop.
-    for(Volunteer * v : volunteers) if(v != nullptr) delete v;
-    for(Customer * c : customers) if(c != nullptr) delete c;
-    for(Order * o : pendingOrders) if(o != nullptr) delete o;
-    for(Order * o : inProcessOrders) if(o != nullptr) delete o;
-    for(Order * o : completedOrders) if(o != nullptr) delete o;
-    for(BaseAction * a : actionsLog) if(a != nullptr) delete a;
+    for(Volunteer * v : volunteers) if(v) delete v;
+    for(Customer * c : customers) if(c) delete c;
+    for(Order * o : pendingOrders) if(o) delete o;
+    for(Order * o : inProcessOrders) if(o) delete o;
+    for(Order * o : completedOrders) if(o) delete o;
+    for(BaseAction * a : actionsLog) if(a) delete a;
 
     volunteers.clear();
     customers.clear();
@@ -485,7 +518,7 @@ void WareHouse::step() {
         volunteer->visit(freeCollectors, freeDrivers);
     }
 
-    for(int i = 0; i < pendingOrders.size(); i++) {
+    for(unsigned long i = 0; i < pendingOrders.size(); i++) {
         Order *order = pendingOrders[i];
         OrderStatus orderStatus = order->getStatus();
         if(orderStatus == OrderStatus::PENDING) {
@@ -505,12 +538,12 @@ void WareHouse::step() {
         else if(orderStatus == OrderStatus::COLLECTING) {
             if (!freeDrivers.empty()) {
                 Volunteer *driver = nullptr;
-                for(int j = 0; j < freeDrivers.size() && driver == nullptr; j++) {
+                for(unsigned long j = 0; j < freeDrivers.size() && driver == nullptr; j++) {
                     if(freeDrivers[j]->canTakeOrder(*order)) {
                         driver = freeDrivers[j];
                     }
                 }
-                if(driver != nullptr) {
+                if(driver) {
                     order->setDriverId(driver->getId());
                     driver->acceptOrder(*order);
                     order->setStatus(OrderStatus::DELIVERING);
@@ -529,7 +562,7 @@ void WareHouse::step() {
         }
     }
 
-    for(int i = 0; i < volunteers.size(); i++) {
+    for (unsigned long i = 0; i < volunteers.size(); i++) {
         Volunteer *volunteer = volunteers[i];
         int activeId = volunteer->getActiveOrderId();
         if(activeId != NO_ORDER) {
@@ -552,7 +585,7 @@ void WareHouse::step() {
  */
 void WareHouse::advanceOrder(int orderId) {
     unsigned long size = inProcessOrders.size();
-    for(int i = 0; i < size; i++) {
+    for(unsigned long i = 0; i < size; i++) {
         Order *order = inProcessOrders[i];
         if(order->getId() == orderId) {
             OrderStatus orderStatus = order->getStatus();
