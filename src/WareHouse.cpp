@@ -58,7 +58,7 @@ WareHouse::WareHouse(const string &configFilePath)  :
  * Starts the warehouse.
  * @note This function is blocking.
  */
-void WareHouse::start() { //TODO Listener loop here
+void WareHouse::start() {
     cout << "Warehouse is open!" << endl;
     while(isOpen) {
         string input;
@@ -218,7 +218,7 @@ void WareHouse::open() {
 WareHouse::~WareHouse() {
     for(Volunteer * volunteer : volunteers) {
         if(volunteer) {
-            delete volunteer; //FIXME - yet to implement destructor of volunteer
+            delete volunteer;
         }
     }
     for (Customer * customer : customers) {
@@ -243,7 +243,7 @@ WareHouse::~WareHouse() {
     }
     for (BaseAction * action : actionsLog) {
         if(action) {
-            delete action; //FIXME - yet to implement destructor of BaseAction
+            delete action;
         }
     }
 }

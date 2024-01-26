@@ -2,7 +2,7 @@
 #include "../include/Action.h"
 #include "../include/Volunteer.h"
 
-// TODO make sure the rule of 5 is actually implemented.
+
 // Constructors, destructors, and method implementations for BaseAction
 /**
  * Status is initialized as error until act is done.
@@ -67,7 +67,6 @@ SimulateStep::SimulateStep(int numOfSteps) : BaseAction(), numOfSteps(numOfSteps
  * Performs the amount of steps as specified when making the action on the given warehouse. The completes the action.
  * @param wareHouse - warehouse to perform the steps on.
  */
- // TODO  check to make sure that this is what needs to happen.
 void SimulateStep::act(WareHouse &wareHouse) {
     for (int i = 0;i<numOfSteps;i++) {
         wareHouse.step();

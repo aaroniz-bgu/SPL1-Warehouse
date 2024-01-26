@@ -62,7 +62,6 @@ Volunteer(id, name), coolDown(coolDown), timeLeft(0) { }
  * @returns a copy of the volunteer.
  */
 CollectorVolunteer *CollectorVolunteer::clone() const  {
-    // FIXME - most likely it's ok and no copy constructor is needed, but make sure.
     return new CollectorVolunteer(*this);
 }
 
@@ -169,7 +168,6 @@ CollectorVolunteer(id, name, coolDown), maxOrders(maxOrders), ordersLeft(maxOrde
  * @returns a copy of the volunteer.
  */
 LimitedCollectorVolunteer *LimitedCollectorVolunteer::clone() const {
-    // FIXME - most likely it's ok and no copy constructor is needed, but make sure.
     return new LimitedCollectorVolunteer(*this);
 }
 
