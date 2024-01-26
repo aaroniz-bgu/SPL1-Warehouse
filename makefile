@@ -53,4 +53,4 @@ $(BIN)/WareHouse.o: $(SRC)/WareHouse.cpp
 
 clean:
 	@echo 'Cleaning up...'
-	rm -f $(BIN)/*.o
+	rm -f $(BIN)/*.o SPLWarehouse

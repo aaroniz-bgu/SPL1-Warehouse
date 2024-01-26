@@ -4,7 +4,8 @@
 // ###                          AbstractVolunteer                          ###
 // ###########################################################################
 
-Volunteer::Volunteer(int id, const string &name) : id(id), name(name), completedOrderId(NO_ORDER), activeOrderId(NO_ORDER) { }
+Volunteer::Volunteer(int id, const string &name) : id(id),
+name(name), completedOrderId(NO_ORDER), activeOrderId(NO_ORDER) { }
 
 /**
  * @returns the volunteer's identifier.
@@ -190,8 +191,8 @@ bool LimitedCollectorVolunteer::canTakeOrder(const Order &order) const {
  */
 void LimitedCollectorVolunteer::acceptOrder(const Order &order) {
     if(canTakeOrder(order)) {
-        ordersLeft -= 1;
         CollectorVolunteer::acceptOrder(order);
+        ordersLeft -= 1;
     }
 }
 
@@ -401,8 +402,8 @@ bool LimitedDriverVolunteer::canTakeOrder(const Order &order) const {
  */
 void LimitedDriverVolunteer::acceptOrder(const Order &order) {
     if(canTakeOrder(order)) {
-        ordersLeft -= 1;
         DriverVolunteer::acceptOrder(order);
+        ordersLeft -= 1;
     }
 }
 

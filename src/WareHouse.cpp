@@ -1,8 +1,9 @@
-#include "WareHouse.h"
-#include "Action.h"
+#include "../include/WareHouse.h"
+#include "../include/Action.h"
 
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 #include "Volunteer.h"
 
 /**
@@ -33,11 +34,14 @@ volunteerCounter(0), orderCounter(0) {
     configFile.close();
 }
 
-void removeCarriageReturn(std::string& str) {
-    if (!str.empty() && str.back() == '\r') {
-        str.erase(str.size() - 1);
-    }
-}
+// ONLY IN DEBUG ENVIRONMENT - DO NOT USE ANYWHERE ELSE
+//void removeCarriageReturn(std::string &str) {
+//    std::size_t lastPos = str.length() - 1;
+//
+//    if (lastPos != std::string::npos && str[lastPos] == '\r') {
+//        str.erase(lastPos);
+//    }
+//}
 
 /**
  * Starts the warehouse.
@@ -48,9 +52,8 @@ void WareHouse::start() { //TODO Listener loop here
     while(isOpen) {
         string input;
         getline(cin, input);  // Read user input
+        //removeCarriageReturn(input); ONLY IN DEBUG
         try {
-            // For debugging purposes only.
-            removeCarriageReturn(input);
             BaseAction *action = actionFactory.createAction(input);
             if (action) {
                 action->act(*this);
@@ -482,8 +485,7 @@ void WareHouse::step() {
         volunteer->visit(freeCollectors, freeDrivers);
     }
 
-    unsigned long size = pendingOrders.size();
-    for(int i = 0; i < size; i++) {
+    for(int i = 0; i < pendingOrders.size(); i++) {
         Order *order = pendingOrders[i];
         OrderStatus orderStatus = order->getStatus();
         if(orderStatus == OrderStatus::PENDING) {
@@ -495,30 +497,39 @@ void WareHouse::step() {
                 volunteer->acceptOrder(*order);
                 order->setStatus(OrderStatus::COLLECTING);
                 inProcessOrders.push_back(order);
-                pendingOrders.erase(pendingOrders.begin() + i);
+
+                pendingOrders.erase(find(pendingOrders.begin(), pendingOrders.end(), order));
+                i--; // since we're updating the vector mid-running.
             }
         }
         else if(orderStatus == OrderStatus::COLLECTING) {
             if (!freeDrivers.empty()) {
-                unsigned long driversSize = freeDrivers.size();
-                for(int j = 0; j < driversSize && !freeDrivers[j]->canTakeOrder(*order); j++) {
-                    order->setCollectorId(freeDrivers[i]->getId());
-                    freeDrivers[i]->acceptOrder(*order);
+                Volunteer *driver = nullptr;
+                for(int j = 0; j < freeDrivers.size() && driver == nullptr; j++) {
+                    if(freeDrivers[j]->canTakeOrder(*order)) {
+                        driver = freeDrivers[j];
+                    }
+                }
+                if(driver != nullptr) {
+                    order->setDriverId(driver->getId());
+                    driver->acceptOrder(*order);
                     order->setStatus(OrderStatus::DELIVERING);
                     inProcessOrders.push_back(order);
-                    pendingOrders.erase(pendingOrders.begin() + i);
-                    freeDrivers.erase(freeDrivers.begin() + j);
+                    freeDrivers.erase(find(freeDrivers.begin(), freeDrivers.end(), driver));
+
+                    pendingOrders.erase(find(pendingOrders.begin(), pendingOrders.end(), order));
+                    i--; // since we're updating the vector mid-running.
                 }
             }
         } else { // That's redundant, but it's here just in case.
             order->setStatus(OrderStatus::COMPLETED);
-            pendingOrders.erase(pendingOrders.begin() + i);
+            pendingOrders.erase(find(pendingOrders.begin(), pendingOrders.end(), order));
+            i--; // since we're updating the vector mid-running.
             completedOrders.push_back(order);
         }
     }
 
-    size = volunteers.size();
-    for(int i = 0; i < size; i++) {
+    for(int i = 0; i < volunteers.size(); i++) {
         Volunteer *volunteer = volunteers[i];
         int activeId = volunteer->getActiveOrderId();
         if(activeId != NO_ORDER) {
@@ -528,11 +539,11 @@ void WareHouse::step() {
                 if(!volunteer->hasOrdersLeft()) {
                     delete volunteer;
                     volunteers[i] = nullptr; // just in case, it's redundant.
-                    volunteers.erase(volunteers.begin() + i);
                 }
             }
         }
     }
+    volunteers.erase(remove(volunteers.begin(), volunteers.end(), nullptr), volunteers.end());
 }
 
 /**
@@ -541,7 +552,7 @@ void WareHouse::step() {
  */
 void WareHouse::advanceOrder(int orderId) {
     unsigned long size = inProcessOrders.size();
-    for(unsigned long i = 0; i < size; i++) {
+    for(int i = 0; i < size; i++) {
         Order *order = inProcessOrders[i];
         if(order->getId() == orderId) {
             OrderStatus orderStatus = order->getStatus();
@@ -551,7 +562,7 @@ void WareHouse::advanceOrder(int orderId) {
                 order->setStatus(OrderStatus::COMPLETED);
                 completedOrders.push_back(order);
             }
-            inProcessOrders.erase(inProcessOrders.begin() + i);
+            inProcessOrders.erase(find(inProcessOrders.begin(), inProcessOrders.end(), order));
             return;
         }
     }
