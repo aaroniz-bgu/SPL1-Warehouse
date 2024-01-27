@@ -4,4 +4,8 @@ cmake-build-debug/
 cmake-build-debug/*
 .idea/
 .idea/*
-temp_bin/*
+temp-bin/
+temp-bin/*
+Doctest_tests/
+Doctest_tests/*
+debug_inputs
