@@ -1,17 +1,17 @@
 #include <iostream>
 #include "../include/Action.h"
-#include "../include/Order.h"
 #include "../include/Volunteer.h"
 
-// TODO make sure the rule of 5 is actually implemented.
+
 // Constructors, destructors, and method implementations for BaseAction
 /**
  * Status is initialized as error until act is done.
  * If an error occurs it will print the error.
  */
-BaseAction::BaseAction() : status(ActionStatus::ERROR){
-    errorMsg = "Not yet acted";
-}
+BaseAction::BaseAction() :
+errorMsg("Not yet acted"),
+status(ActionStatus::ERROR)
+{ }
 
 /**
  * returns the status.
@@ -67,7 +67,6 @@ SimulateStep::SimulateStep(int numOfSteps) : BaseAction(), numOfSteps(numOfSteps
  * Performs the amount of steps as specified when making the action on the given warehouse. The completes the action.
  * @param wareHouse - warehouse to perform the steps on.
  */
- // TODO  check to make sure that this is what needs to happen.
 void SimulateStep::act(WareHouse &wareHouse) {
     for (int i = 0;i<numOfSteps;i++) {
         wareHouse.step();
@@ -486,8 +485,14 @@ string RestoreWareHouse::toString() const {
  * @param maxOrders - default -1, if it's limited add here.
  */
 AddVolunteer::AddVolunteer(string name, int coolDown, int maxOrders) :
-    BaseAction(), name(name), cooldown(coolDown), maxOrders(maxOrders),
-    distance_per_step(-1), maxDistance(-1), type(VolunteerType::Collector) { }
+    BaseAction(),
+    name(name),
+    cooldown(coolDown),
+    maxDistance(-1),
+    distance_per_step(-1),
+    maxOrders(maxOrders),
+    type(VolunteerType::Collector)
+{ }
 
 
 /**
@@ -501,8 +506,13 @@ AddVolunteer::AddVolunteer(string name, int coolDown, int maxOrders) :
  * @param maxOrders - default -1, if it's limited add here.
  */
 AddVolunteer::AddVolunteer(string name, int maxDistance, int distance_per_step, int maxOrders) :
-    BaseAction(), name(name), maxDistance(maxDistance), distance_per_step(distance_per_step),
-    maxOrders(maxOrders), cooldown(-1), type(VolunteerType::Driver) { }
+    BaseAction(),
+    name(name),
+    cooldown(-1),
+    maxDistance(maxDistance),
+    distance_per_step(distance_per_step),
+    maxOrders(maxOrders),
+    type(VolunteerType::Driver) { }
 
 
 /**

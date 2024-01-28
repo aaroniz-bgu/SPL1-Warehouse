@@ -17,7 +17,12 @@ using std::vector;
  * @param maxOrders - customer's order limit.
  */
 Customer::Customer(int id, const string &name, int locationDistance, int maxOrders) :
-id(id), name(name), locationDistance(locationDistance), maxOrders(maxOrders) { /* Hi bodek/et */ }
+id(id),
+name(name),
+locationDistance(locationDistance),
+maxOrders(maxOrders),
+ordersId()
+{ /* Hi bodek/et */ }
 
 /**
  * @returns the customer's name.
@@ -58,7 +63,8 @@ int Customer::getNumOrders() const {
  * @returns true if the customer can make another order, false otherwise.
  */
 bool Customer::canMakeOrder() const {
-    return ordersId.size() < maxOrders;
+    int size = ordersId.size(); // Was giving a warning comparing ordersId with maxOrders, so casting here.
+    return size < maxOrders;
 }
 
 /**

@@ -4,8 +4,12 @@
 // ###                          AbstractVolunteer                          ###
 // ###########################################################################
 
-Volunteer::Volunteer(int id, const string &name) : id(id),
-name(name), completedOrderId(NO_ORDER), activeOrderId(NO_ORDER) { }
+Volunteer::Volunteer(int id, const string &name) :
+    completedOrderId(NO_ORDER),
+    activeOrderId(NO_ORDER),
+    id(id),
+    name(name)
+{ }
 
 /**
  * @returns the volunteer's identifier.
@@ -58,7 +62,6 @@ Volunteer(id, name), coolDown(coolDown), timeLeft(0) { }
  * @returns a copy of the volunteer.
  */
 CollectorVolunteer *CollectorVolunteer::clone() const  {
-    // FIXME - most likely it's ok and no copy constructor is needed, but make sure.
     return new CollectorVolunteer(*this);
 }
 
@@ -165,7 +168,6 @@ CollectorVolunteer(id, name, coolDown), maxOrders(maxOrders), ordersLeft(maxOrde
  * @returns a copy of the volunteer.
  */
 LimitedCollectorVolunteer *LimitedCollectorVolunteer::clone() const {
-    // FIXME - most likely it's ok and no copy constructor is needed, but make sure.
     return new LimitedCollectorVolunteer(*this);
 }
 
