@@ -107,6 +107,7 @@ void AddOrder::act(WareHouse &wareHouse) {
         if (!customer.canMakeOrder()) {
             error("Cannot place this order");
             std::cout << getErrorMsg() << std::endl;
+            return;
         }
         int customerDistance = customer.getCustomerDistance();
         int orderID = wareHouse.getOrderCount();
