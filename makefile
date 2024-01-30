@@ -6,15 +6,15 @@ SRC = src
 
 objects = $(BIN)/Action.o $(BIN)/ActionFactory.o $(BIN)/Customer.o $(BIN)/main.o $(BIN)/Order.o $(BIN)/Volunteer.o $(BIN)/WareHouse.o
 
-all: directory SPLWarehouse
+all: directory warehouse
 
 directory:
 	mkdir -p $(BIN)
 
-SPLWarehouse: clean $(objects)
-	@echo 'Building SPLWarehouse with all objects'
-	$(CC) -o SPLWarehouse $(objects)
-	@echo 'Finished building SPLWarehouse'
+warehouse: clean $(objects)
+	@echo 'Building warehouse with all objects'
+	$(CC) -o $(BIN)/warehouse $(objects)
+	@echo 'Finished building warehouse'
 
 $(BIN)/Action.o: $(SRC)/Action.cpp
 	@echo 'Compiling Action'
@@ -53,4 +53,4 @@ $(BIN)/WareHouse.o: $(SRC)/WareHouse.cpp
 
 clean:
 	@echo 'Cleaning up...'
-	rm -f $(BIN)/*.o SPLWarehouse
+	rm -f $(BIN)/*
