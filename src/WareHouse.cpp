@@ -366,6 +366,7 @@ WareHouse& WareHouse::operator=(const WareHouse &other) {
     isOpen = other.isOpen;
     customerCounter = other.customerCounter;
     volunteerCounter = other.volunteerCounter;
+    orderCounter = other.orderCounter;
 
     for (const Volunteer * v: other.volunteers) {
         volunteers.push_back(v->clone());
@@ -395,6 +396,7 @@ WareHouse& WareHouse::operator=(WareHouse &&other) noexcept {
     isOpen = other.isOpen;
     customerCounter = other.customerCounter;
     volunteerCounter = other.volunteerCounter;
+    orderCounter = other.orderCounter;
 
     int size = other.volunteers.size(); // Minimizing calls to size()
     volunteers = vector<Volunteer*>(size);
