@@ -31,6 +31,10 @@ class Order {
         OrderStatus getStatus() const;
         const string toString() const;
 
+        // Student's extra fucntions
+        int getDistance() const;
+        ~Order() = default;
+
     private:
         const int id;
         const int customerId;

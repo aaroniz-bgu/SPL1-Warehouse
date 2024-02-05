@@ -5,12 +5,14 @@ using namespace std;
 
 #include "Order.h"
 #include "Customer.h"
+#include "ActionFactory.h"
 
 class BaseAction;
+class ActionFactory;
 class Volunteer;
 
-// Warehouse responsible for Volunteers, Customers Actions, and Orders.
 
+// Warehouse responsible for Volunteers, Customers Actions, and Orders.
 
 class WareHouse {
 
@@ -26,6 +28,24 @@ class WareHouse {
         void close();
         void open();
 
+        // Student defined functions and variables:
+        int addVolunteer(Volunteer* volunteer);
+        int addCustomer(int type, const string &name, int locationDistance, int maxOrders);
+  
+        ~WareHouse(); //Destructor
+        int getCustomerCount() const;
+        int getVolunteerCount() const;
+        int getOrderCount() const;
+        const vector<Order*> &getPendingOrders() const;
+        const vector<Order*> &getInProcessOrders() const;
+        const vector<Order*> &getCompletedOrders() const;
+        void step();
+        void advanceOrder(int orderId);
+        WareHouse(const WareHouse &other);
+        WareHouse(WareHouse &&other) noexcept;
+        WareHouse& operator=(const WareHouse &other);
+        WareHouse& operator=(WareHouse &&other) noexcept;
+
     private:
         bool isOpen;
         vector<BaseAction*> actionsLog;
@@ -36,4 +56,8 @@ class WareHouse {
         vector<Customer*> customers;
         int customerCounter; //For assigning unique customer IDs
         int volunteerCounter; //For assigning unique volunteer IDs
+
+        ActionFactory actionFactory;
+        int orderCounter; //For assigning unique order IDs
+        void freeResources();
 };

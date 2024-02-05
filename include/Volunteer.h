@@ -1,4 +1,4 @@
-#pragma once
+    #pragma once
 #include <string>
 #include <vector>
 #include "Order.h"
@@ -24,6 +24,15 @@ class Volunteer {
         virtual string toString() const = 0;
         virtual Volunteer* clone() const = 0; //Return a copy of the volunteer
 
+        virtual ~Volunteer() = default;
+        /**
+         * Used in SimulateStep::step.
+         * A visitor design pattern to improve runtime-dynamic dispatch of free volunteers
+         * @param freeCollectors free volunteers of type CollectorVolunteer
+         * @param freeDrivers free volunteers of type DriverVolunteer
+         */
+        virtual void visit(vector<Volunteer*> &freeCollectors, vector<Volunteer*> &freeDrivers) = 0;
+
     protected:
         int completedOrderId; //Initialized to NO_ORDER if no order has been completed yet
         int activeOrderId; //Initialized to NO_ORDER if no order is being processed
@@ -48,7 +57,10 @@ class CollectorVolunteer: public Volunteer {
         bool canTakeOrder(const Order &order) const override;
         void acceptOrder(const Order &order) override;
         string toString() const override;
-    
+
+        ~CollectorVolunteer() override = default;
+        void visit(vector<Volunteer*> &freeCollectors, vector<Volunteer*> &freeDrivers) override;
+
     private:
         const int coolDown; // The time it takes the volunteer to process an order
         int timeLeft; // Time left until the volunteer finishes his current order
@@ -66,7 +78,9 @@ class LimitedCollectorVolunteer: public CollectorVolunteer {
         int getMaxOrders() const;
         int getNumOrdersLeft() const;
         string toString() const override;
-    
+
+        ~LimitedCollectorVolunteer() override = default;
+
     private:
         const int maxOrders; // The number of orders the volunteer can process in the whole simulation
         int ordersLeft; // The number of orders the volunteer can still take
@@ -88,6 +102,9 @@ class DriverVolunteer: public Volunteer {
         void step() override; // Decrease distanceLeft by distancePerStep
         string toString() const override;
 
+        ~DriverVolunteer() override = default;
+        void visit(vector<Volunteer*> &freeCollectors, vector<Volunteer*> &freeDrivers) override;
+
     private:
         const int maxDistance; // The maximum distance of ANY order the volunteer can take
         const int distancePerStep; // The distance the volunteer does in one step
@@ -105,6 +122,8 @@ class LimitedDriverVolunteer: public DriverVolunteer {
         bool canTakeOrder(const Order &order) const override; // Signal if the volunteer is not busy, the order is within the maxDistance.
         void acceptOrder(const Order &order) override; // Assign distanceLeft to order's distance and decrease ordersLeft
         string toString() const override;
+
+        ~LimitedDriverVolunteer() override = default;
 
     private:
         const int maxOrders; // The number of orders the volunteer can process in the whole simulation
