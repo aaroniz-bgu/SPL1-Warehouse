@@ -3,9 +3,9 @@ This project simulates a functioning warehouse in a command-line interface, wher
 
 
 ## Features
-Order placement: Civilians and soldiers can place orders for different types of supplies.
-Order limitations: Civilians and soldiers are restricted in the types and quantities of supplies they can order.
-Volunteer management: Volunteers handle the picking and delivery of ordered supplies.
+1. Order placement: Civilians and soldiers can place orders for different types of supplies.
+2. Order limitations: Civilians and soldiers are restricted in the types and quantities of supplies they can order.
+3. Volunteer management: Volunteers handle the picking and delivery of ordered supplies.
 
 
 ## Build Instructions
